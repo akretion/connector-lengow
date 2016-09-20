@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <menuitem id="menu_lengow_root"
+        parent="connector.menu_connector_root"
+        name="Lengow"
+        sequence="10"
+        groups="connector.group_connector_manager"/>
+
+    <menuitem id="menu_lengow_backend"
+        name="Backends"
+        parent="menu_lengow_root"
+        action="action_lengow_backend"/>
+
+    <menuitem id="menu_lengow_sale"
+        name="Lengow"
+        parent="base.menu_base_partner"
+        sequence="10"/>
+
+    <menuitem id="menu_lengow_products"
+        name="Binded Products"
+        parent="menu_lengow_sale"
+        action="action_lengow_product_product"/>
+
+    <menuitem id="menu_lengow_bind_products"
+        name="Bind Products"
+        parent="menu_lengow_sale"
+        action="action_lengow_product_binding_wizard"/>
+    
+    <record id="lengowerpconnect.menu_lengow_bind_products" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('group_lengow_manager'))]"/>
+    </record>
+
+  </data>
+</openerp>

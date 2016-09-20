@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+
+        <record id="view_lengow_backend_form" model="ir.ui.view">
+            <field name="name">view.lengow.backend.form</field>
+            <field name="model">lengow.backend</field>
+            <field name="arch" type="xml">
+                <form string="Lengow Backend">
+                    <header>
+                        <button name="%(action_lengow_product_binding_wizard)d" type="action" string="Bind Products" class="oe_highlight"/>
+                        <button name="export_binded_products" type="object" string="Export Products"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button class="oe_stat_button oe_right"
+                                    name="%(action_lengow_product_product_no_group_by)d" type="action"
+                                    icon="fa-file-text-o"
+                                    context="{'search_default_backend_id': active_id}">
+                                <div><strong><field nolabel="1" name="binded_products_count" widget="statinfo"/></strong>Products</div>
+                            </button>
+                        </div>
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" class="oe_inline" />
+                        </h1>
+                        <group name="lengow" string="Lengow Configuration">
+                            <notebook>
+                                <page string="API" name="api">
+                                    <group colspan="4" col="4">
+                                        <field name="version" colspan="4"/>
+                                        <field name="location" placeholder="e.g. http://my.lengow.com"
+                                            colspan="4" widget="url"/>
+                                        <field name="username" colspan="2"/>
+                                        <field name="password" password="1" colspan="2"/>
+                                    </group>
+                                </page>
+                                <page string="Product Flow" name="product_flow">
+                                    <group string="FTP" name="ftp" colspan="4" col="4">
+                                         <field name="product_ftp_host" colspan="2"/>
+                                        <field name="product_ftp_port" colspan="2"/>
+                                        <field name="product_ftp_user" colspan="2"/>
+                                        <field name="product_ftp_password" password="1" colspan="2"/>
+                                        <field name="product_ftp_directory" colspan="2"/>
+                                        <field name="product_ftp_filename" colspan="2"/>
+                                    </group>
+                                    <group string='Product Configuration'>
+                                        <field name="default_lang_id" widget="selection"/>
+                                        <field name="product_stock_field_id" widget="selection"
+                                            domain="[('model', 'in', ['product.product', 'product.template']), ('ttype', '=', 'float')]"/>
+                                    </group>
+                                </page>
+                                <page string="General" name="general">
+                                    <group>
+                                        <field name="warehouse_id"/>
+                                        <field name="account_analytic_id" groups="sale.group_analytic_accounting" />
+                                        <field name="fiscal_position_id"/>
+                                    </group>
+                                </page>
+                            </notebook>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_lengow_backend_tree" model="ir.ui.view">
+            <field name="name">lengow.backend.tree</field>
+            <field name="model">lengow.backend</field>
+            <field name="arch" type="xml">
+                <tree string="Lengow Backend">
+                    <field name="name"/>
+                    <field name="location"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_lengow_backend" model="ir.actions.act_window">
+            <field name="name">Lengow Backends</field>
+            <field name="res_model">lengow.backend</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_lengow_backend_tree"/>
+        </record>
+    </data>
+</openerp>
