@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from cStringIO import StringIO
 import base64
+from cStringIO import StringIO
 import csv
-import ftputil.session
 
+import ftputil.session
 from openerp import api, fields, models
-from openerp.addons.connector.unit.mapper import ExportMapper
-from openerp.addons.connector.unit.synchronizer import Exporter
-from openerp.addons.connector.unit.mapper import mapping
+
 from openerp.addons.connector.queue.job import job
 from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.unit.mapper import ExportMapper
+from openerp.addons.connector.unit.mapper import mapping
+from openerp.addons.connector.unit.synchronizer import Exporter
 
-from .backend import lengow
 from .adapter import ProductAdapter
+from .backend import lengow
 from .connector import get_environment
 
 
@@ -106,7 +107,7 @@ class ProductExportMapper(ExportMapper):
 
     @mapping
     def DESCRIPTION(self, record):
-        return {'DESCRIPTION': record.description_sale or ''}
+        return {'DESCRIPTION': record.description_sale or record.name}
 
     @mapping
     def PRICE_PRODUCT(self, record):
