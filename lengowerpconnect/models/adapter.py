@@ -45,7 +45,13 @@ class ProductAdapter(ConnectorUnit):
         data = OrderedDict(sorted(self._DataMap.items(), key=lambda r: r[1]))
         for attr, _ in data.items():
             if attr in record:
-                values.append(str(record[attr]))
+                val = record[attr]
+                if isinstance(val, unicode):
+                    try:
+                        val = val.encode('utf-8')
+                    except UnicodeError:
+                        pass
+                values.append(val)
 
         return values
 
