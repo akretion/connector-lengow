@@ -13,7 +13,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
     def test_product_binding(self):
         '''
             Select a product and
-            - bind it to a Lengow Backend
+            - bind it to a Lengow Catalogue
             - unbind it
             - bind it again
         '''
@@ -21,7 +21,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # Bind the product to the Backend
         # --------------------------------
         bind_wizard = self.bind_wizard_model.create(
-            {'lengow_backend_id': self.backend.id,
+            {'catalogue_id': self.catalogue.id,
              'product_ids': [(6, 0, [self.product.id])]})
 
         bind_wizard.bind_products()
@@ -30,6 +30,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 1)
@@ -45,6 +46,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 0)
@@ -54,6 +56,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
             active_test=False).search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 1)
@@ -67,20 +70,21 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 1)
 
     def test_product_inactivation(self):
         '''
-            Select a product and bind it to a Lengow Backend
+            Select a product and bind it to a Lengow Catalogue
             Inactivation of the product must unbind the product
         '''
         # --------------------------------
         # Bind the product to the Backend
         # --------------------------------
         bind_wizard = self.bind_wizard_model.create(
-            {'lengow_backend_id': self.backend.id,
+            {'catalogue_id': self.catalogue.id,
              'product_ids': [(6, 0, [self.product.id])]})
 
         bind_wizard.bind_products()
@@ -89,6 +93,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 1)
@@ -102,6 +107,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 0)
@@ -115,6 +121,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.search(
             [('odoo_id', '=', self.product.id),
              ('backend_id', '=', self.backend.id),
+             ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
         self.assertEqual(len(bind_record), 0)

@@ -13,24 +13,21 @@
         parent="menu_lengow_root"
         action="action_lengow_backend"/>
 
+    <menuitem id="menu_lengow_catalogue"
+        name="Catalogues"
+        parent="menu_lengow_root"
+        action="action_lengow_catalogue"/>
+
     <menuitem id="menu_lengow_sale"
         name="Lengow"
         parent="base.menu_base_partner"
         sequence="10"/>
 
-    <menuitem id="menu_lengow_products"
-        name="Binded Products"
+    <menuitem id="menu_lengow_catalogue_sale"
+        name="Catalogues"
         parent="menu_lengow_sale"
-        action="action_lengow_product_product"/>
-
-    <menuitem id="menu_lengow_bind_products"
-        name="Bind Products"
-        parent="menu_lengow_sale"
-        action="action_lengow_product_binding_wizard"/>
-    
-    <record id="lengowerpconnect.menu_lengow_bind_products" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('group_lengow_manager'))]"/>
-    </record>
+        action="action_lengow_catalogue"
+        sequence="10"/>
 
   </data>
 </openerp>

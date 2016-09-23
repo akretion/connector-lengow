@@ -23,19 +23,10 @@ class TestLengowProductBinding(common.SetUpLengowBase):
                             'product_url': 'url_product',
                             'image_url': 'url_image'})
         bind_wizard = self.bind_wizard_model.create(
-            {'lengow_backend_id': self.backend.id,
+            {'catalogue_id': self.catalogue.id,
              'product_ids': [(6, 0, [self.product.id])]})
 
         bind_wizard.bind_products()
-
-        wiz_lang = self.env['base.language.install'].create(
-            {'lang': 'fr_FR'
-             })
-        wiz_lang.lang_install()
-
-        self.product.with_context(lang="fr_FR").write(
-            {'name': 'DVD-RW vierge',
-             'description_sale': 'Description de vente'})
 
     def test_export_products(self):
         """
@@ -45,12 +36,11 @@ class TestLengowProductBinding(common.SetUpLengowBase):
                               'lengow.product.product', self.backend.id)
         products_exporter = env.get_connector_unit(ProductExporter)
 
-        products_exporter.run(self.backend,
-                              self.backend.binded_product_ids,
-                              FTPTransfert=False)
+        products_exporter.run(self.catalogue,
+                              self.catalogue.binded_product_ids)
 
         csv_file = self.env['ir.attachment'].search(
-            [('name', '=', self.backend.product_ftp_filename)])
+            [('name', '=', self.catalogue.product_filename)])
 
         datas = b64decode(csv_file.datas)
         reader = csv.DictReader(StringIO(datas),
@@ -82,19 +72,27 @@ class TestLengowProductBinding(common.SetUpLengowBase):
             Export a product and check result file
             - Set french as export language
         """
+        wiz_lang = self.env['base.language.install'].create(
+            {'lang': 'fr_FR'
+             })
+        wiz_lang.lang_install()
+
+        self.product.with_context(lang="fr_FR").write(
+            {'name': 'DVD-RW vierge',
+             'description_sale': 'Description de vente'})
+
         fr = self.env['res.lang'].search([('code', '=', 'fr_FR')])
-        self.backend.write({'default_lang_id': fr.id})
+        self.catalogue.write({'default_lang_id': fr.id})
 
         env = get_environment(ConnectorSession.from_env(self.env),
                               'lengow.product.product', self.backend.id)
         products_exporter = env.get_connector_unit(ProductExporter)
 
-        products_exporter.run(self.backend,
-                              self.backend.binded_product_ids,
-                              FTPTransfert=False)
+        products_exporter.run(self.catalogue,
+                              self.catalogue.binded_product_ids)
 
         csv_file = self.env['ir.attachment'].search(
-            [('name', '=', self.backend.product_ftp_filename)])
+            [('name', '=', self.catalogue.product_filename)])
 
         datas = b64decode(csv_file.datas)
         reader = csv.DictReader(StringIO(datas),
@@ -141,17 +139,16 @@ class TestLengowProductBinding(common.SetUpLengowBase):
             'product_id': self.product.id,
             'price_discount': -0.1,
         })
-        self.backend.write({'product_pricelist_id': pricelist.id})
+        self.catalogue.write({'product_pricelist_id': pricelist.id})
         env = get_environment(ConnectorSession.from_env(self.env),
                               'lengow.product.product', self.backend.id)
         products_exporter = env.get_connector_unit(ProductExporter)
 
-        products_exporter.run(self.backend,
-                              self.backend.binded_product_ids,
-                              FTPTransfert=False)
+        products_exporter.run(self.catalogue,
+                              self.catalogue.binded_product_ids)
 
         csv_file = self.env['ir.attachment'].search(
-            [('name', '=', self.backend.product_ftp_filename)])
+            [('name', '=', self.catalogue.product_filename)])
 
         datas = b64decode(csv_file.datas)
         reader = csv.DictReader(StringIO(datas),

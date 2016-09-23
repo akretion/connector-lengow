@@ -12,6 +12,7 @@ class SetUpLengowBase(common.TransactionCase):
     def setUp(self):
         super(SetUpLengowBase, self).setUp()
         self.backend_model = self.env['lengow.backend']
+        self.catalogue_model = self.env['lengow.catalogue']
         self.bind_wizard_model = self.env['lengow.product.binding.wizard']
         self.unbind_wizard_model = self.env['lengow.product.unbinding.wizard']
         self.product_bind_model = self.env['lengow.product.product']
@@ -24,12 +25,12 @@ class SetUpLengowBase(common.TransactionCase):
              'version': '2.0',
              'location': 'http://anyurl',
              'username': 'acsone',
-             'password': '42',
-             'product_ftp_host': 'ftpserver',
-             'product_ftp_port': '22',
-             'product_ftp_user': 'acsone',
-             'product_ftp_password': '42',
-             'product_ftp_directory': '/home/upload',
-             'product_ftp_filename': 'products.csv',
+             'password': '42'}
+        )
+        self.catalogue = self.catalogue_model.create(
+            {'name': 'Test Lengow Catalogue',
+             'backend_id': self.backend.id,
+             'product_ftp': False,
+             'product_filename': 'products.csv',
              'warehouse_id': warehouse.id}
         )

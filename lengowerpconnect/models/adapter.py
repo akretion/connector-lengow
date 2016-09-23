@@ -1,60 +1,64 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from collections import OrderedDict
-
-from openerp.addons.connector.connector import ConnectorUnit
-
-from .backend import lengow
+from openerp.addons.connector.unit.backend_adapter import CRUDAdapter
 
 
-class LengowAdapter():
+class LengowLocation(object):
 
-    _data = ''
+    def __init__(self, location, username, password):
+        self._location = location
+        self.username = username
+        self.password = password
 
-    def __init__(self, data=None):
-        if data and data != '' and self._checkValid(data):
-            self._data = data
+    @property
+    def location(self):
+        location = self._location
+        if not self.use_auth_basic:
+            return location
+        assert self.auth_basic_username and self.auth_basic_password
+        replacement = "%s:%s@" % (self.auth_basic_username,
+                                  self.auth_basic_password)
+        location = location.replace('://', '://' + replacement)
+        return location
 
-    def _checkValid(self, data):
-        return True
 
-    def getCSVFromRecord(self, record):
+class LengowCRUDAdapter(CRUDAdapter):
+    """ External Records Adapter for Lengow """
 
-        raise NotImplementedError('Not Implemented!')
+    def __init__(self, connector_env):
+        """
 
+        :param connector_env: current environment (backend, session, ...)
+        :type connector_env: :class:`connector.connector.ConnectorEnvironment`
+        """
+        super(LengowCRUDAdapter, self).__init__(connector_env)
 
-@lengow
-class ProductAdapter(ConnectorUnit):
-    _model_name = 'lengow.product.product'
+    def search(self, filters=None):
+        """ Search records according to some criterias
+        and returns a list of ids """
+        raise NotImplementedError
 
-    _DataMap = {'ID_PRODUCT': 0,
-                'NAME_PRODUCT': 1,
-                'DESCRIPTION': 2,
-                'PRICE_PRODUCT': 3,
-                'CATEGORY': 4,
-                'URL_PRODUCT': 5,
-                'URL_IMAGE': 6,
-                'EAN': 7,
-                'SUPPLIER_CODE': 8,
-                'BRAND': 9,
-                'QUANTITY': 10}
+    def read(self, id, attributes=None):
+        """ Returns the information of a record """
+        raise NotImplementedError
 
-    def getCSVFromRecord(self, record):
-        values = []
-        data = OrderedDict(sorted(self._DataMap.items(), key=lambda r: r[1]))
-        for attr, _ in data.items():
-            if attr in record:
-                val = record[attr]
-                if isinstance(val, unicode):
-                    try:
-                        val = val.encode('utf-8')
-                    except UnicodeError:
-                        pass
-                values.append(val)
+    def search_read(self, filters=None):
+        """ Search records according to some criterias
+        and returns their information"""
+        raise NotImplementedError
 
-        return values
+    def create(self, data):
+        """ Create a record on the external system """
+        raise NotImplementedError
 
-    def getCSVHeader(self):
-        header = OrderedDict(sorted(self._DataMap.items(), key=lambda r: r[1]))
-        return header.keys()
+    def write(self, id, data):
+        """ Update records on the external system """
+        raise NotImplementedError
+
+    def delete(self, id):
+        """ Delete a record on the external system """
+        raise NotImplementedError
+
+    def _call(self, method, arguments):
+        return

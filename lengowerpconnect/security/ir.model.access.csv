@@ -1,5 +1,7 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "access_lengow_backend_manager","lengow_backend lengow manager","model_lengow_backend","group_lengow_manager",1,1,1,1
 "access_lengow_backend_user","lengow_backend lengow user","model_lengow_backend","group_lengow_user",1,0,0,0
+"access_lengow_catalogue_manager","lengow_catalogue lengow manager","model_lengow_catalogue","group_lengow_manager",1,1,1,1
+"access_lengow_catalogue_user","lengow_catalogue lengow user","model_lengow_catalogue","group_lengow_user",1,0,0,0
 "access_lengow_product_product_manager","lengow_product_product lengow manager","model_lengow_product_product","group_lengow_manager",1,1,1,1
 "access_lengow_product_product_user","lengow_product_product lengow user","model_lengow_product_product","group_lengow_user",1,0,0,0
