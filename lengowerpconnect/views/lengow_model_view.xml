@@ -8,6 +8,9 @@
             <field name="model">lengow.backend</field>
             <field name="arch" type="xml">
                 <form string="Lengow Backend">
+                    <header>
+                        <button name="synchronize_metadata" type="object" string="Synchronize Metadata" class="oe_highlight" groups="lengowerpconnect.group_lengow_manager"/>
+                    </header>
                     <sheet>
                         <div class="oe_right oe_button_box" name="buttons">
                             <button class="oe_stat_button oe_right"
@@ -28,8 +31,8 @@
                                         <field name="version" colspan="4"/>
                                         <field name="location" placeholder="e.g. http://my.lengow.com"
                                             colspan="4" widget="url"/>
-                                        <field name="username" colspan="2"/>
-                                        <field name="password" password="1" colspan="2"/>
+                                        <field name="access_token" colspan="2"/>
+                                        <field name="secret" password="1" colspan="2"/>
                                     </group>
                                 </page>
                                 <page string="Catalogues" name="catalogue">
@@ -41,6 +44,7 @@
                                     <group>
                                         <field name="account_analytic_id" groups="sale.group_analytic_accounting" />
                                         <field name="fiscal_position_id"/>
+                                        <field name="warehouse_id"/>
                                     </group>
                                 </page>
                             </notebook>
@@ -150,6 +154,57 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_lengow_catalogue_tree"/>
+        </record>
+
+         <record id="view_lengow_marketplace_form" model="ir.ui.view">
+            <field name="name">lengow.market.place.form</field>
+            <field name="model">lengow.market.place</field>
+            <field name="arch" type="xml">
+                <form string="Lengow MarketPlace" create="0" delete="0">
+                    <sheet>
+                        <div class="oe_title">
+                            <label class="oe_edit_only" for="name" string="MarketPlace"/>
+                            <h1><field name="name" class="oe_inline" readonly="1"/></h1>
+                        </div>
+                        <group string="Informations">
+                            <field name="backend_id" readonly="1"/>
+                            <field name="homepage" widget='url' readonly="1"/>
+                            <field name="description" readonly="1"/>
+                        </group>
+                        <group string="Options" name="options">
+                            <field name="account_analytic_id" groups="sale.group_analytic_accounting" class="oe_read_only"/>
+                            <field name="specific_account_analytic_id" groups="sale.group_analytic_accounting" class="oe_edit_only" />
+                            <field name="fiscal_position_id" class="oe_read_only"/>
+                            <field name="specific_fiscal_position_id" class="oe_edit_only" />
+                            <field name="warehouse_id" class="oe_read_only"/>
+                            <field name="specific_warehouse_id" class="oe_edit_only"/>
+                        </group>
+                        <notebook>
+                            <page name="import" string="Imports">
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_lengow_marketplace_tree" model="ir.ui.view">
+            <field name="name">lengow.market.place.tree</field>
+            <field name="model">lengow.market.place</field>
+            <field name="arch" type="xml">
+                <tree string="Lengow MarketPlace" create="0" delete="0">
+                    <field name="name"/>
+                    <field name="homepage"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_lengow_marketplace" model="ir.actions.act_window">
+            <field name="name">Lengow MarketPlaces</field>
+            <field name="res_model">lengow.market.place</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_lengow_marketplace_tree"/>
         </record>
     </data>
 </openerp>

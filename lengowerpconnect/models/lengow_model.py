@@ -1,9 +1,24 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+import logging
+
 from openerp import api, fields, models
 from openerp.tools.translate import _
 from openerp.exceptions import ValidationError
+from openerp.exceptions import Warning
+from openerp.addons.connector.unit.mapper import ImportMapper
+from openerp.addons.connector.unit.mapper import mapping
+from openerp.addons.connector.session import ConnectorSession
+
+from .backend import lengow
+from .adapter import GenericAdapter
+from .import_synchronizer import import_batch
+from .import_synchronizer import DirectBatchImporter
+from .import_synchronizer import LengowImporter
+
+
+_logger = logging.getLogger(__name__)
 
 
 class LengowBackend(models.Model):
@@ -29,12 +44,12 @@ class LengowBackend(models.Model):
         required=True,
         help="Url to Lengow application",
     )
-    username = fields.Char(
-        string='Username',
-        help="Webservice user",
+    access_token = fields.Char(
+        string='Access Token',
+        help="WebService Access Token",
     )
-    password = fields.Char(
-        string='Password',
+    secret = fields.Char(
+        string='Secret',
         help="Webservice password",
     )
     company_id = fields.Many2one(
@@ -57,6 +72,14 @@ class LengowBackend(models.Model):
         'field fiscal position on the sale order created by the connector.'
         'The value can also be specified on the marketplace.'
     )
+    warehouse_id = fields.Many2one(
+        comodel_name='stock.warehouse',
+        string='Warehouse',
+        required=True,
+        help='If specified, this warehouse will be used to fill the '
+        'field warehouse on the sale order created by the connector.'
+        'The value can also be specified on the marketplace.',
+    )
     catalogue_ids = fields.One2many(string='Catalogue',
                                     comodel_name='lengow.catalogue',
                                     inverse_name='backend_id')
@@ -68,6 +91,21 @@ class LengowBackend(models.Model):
 
     def _get_default_company(self):
         return self.env.user.company_id
+
+    @api.multi
+    def synchronize_metadata(self):
+        try:
+            session = ConnectorSession.from_env(self.env)
+            for backend in self:
+                for model in ['lengow.market.place', ]:
+                    import_batch(session, model, backend.id)
+            return True
+        except Exception as e:
+            _logger.error(e.message, exc_info=True)
+            raise Warning(
+                _(u"Check your configuration, we can't get the data. "
+                  u"Here is the error:\n%s") %
+                str(e).decode('utf-8', 'ignore'))
 
 
 class LengowCatalogue(models.Model):
@@ -164,3 +202,102 @@ class LengowCatalogue(models.Model):
             raise ValidationError(_('You are not allowed to update the backend'
                                     ' reference !'))
         return super(LengowCatalogue, self).write(vals)
+
+
+class LengowMarketPlace(models.Model):
+    _name = 'lengow.market.place'
+    _inherit = ['lengow.binding']
+    _description = 'Lengow Market Place'
+    _parent_name = 'backend_id'
+
+    name = fields.Char(string='Name')
+    homepage = fields.Char(string='Home Page')
+    description = fields.Text(string='Text')
+    specific_account_analytic_id = fields.Many2one(
+        comodel_name='account.analytic.account',
+        string='Specific analytic account',
+    )
+    specific_fiscal_position_id = fields.Many2one(
+        comodel_name='account.fiscal.position',
+        string='Specific fiscal position',
+    )
+    specific_warehouse_id = fields.Many2one(
+        comodel_name='stock.warehouse',
+        string='Specific warehouse',
+    )
+    account_analytic_id = fields.Many2one(
+        comodel_name='account.analytic.account',
+        string='Analytic account',
+        compute='_get_account_analytic_id',
+    )
+    fiscal_position_id = fields.Many2one(
+        comodel_name='account.fiscal.position',
+        string='Fiscal position',
+        compute='_get_fiscal_position_id',
+    )
+    warehouse_id = fields.Many2one(
+        comodel_name='stock.warehouse',
+        string='warehouse',
+        compute='_get_warehouse_id')
+
+    @api.multi
+    def _get_account_analytic_id(self):
+        for mp in self:
+            mp.account_analytic_id = (
+                mp.specific_account_analytic_id or
+                mp.backend_id.account_analytic_id)
+
+    @api.multi
+    def _get_fiscal_position_id(self):
+        for mp in self:
+            mp.fiscal_position_id = (
+                mp.specific_fiscal_position_id or
+                mp.backend_id.fiscal_position_id)
+
+    @api.multi
+    def _get_warehouse_id(self):
+        for mp in self:
+            mp.warehouse_id = (
+                mp.specific_warehouse_id or
+                mp.backend_id.warehouse_id)
+
+
+@lengow
+class LengowMarketPlaceAdapter(GenericAdapter):
+    _model_name = 'lengow.market.place'
+    _api = "v3.0/marketplaces/"
+
+    def search(self, params, with_account=False):
+        return super(LengowMarketPlaceAdapter, self).search(params,
+                                                            with_account=True)
+
+
+@lengow
+class LengowMarketPlaceBatchImporter(DirectBatchImporter):
+    _model_name = 'lengow.market.place'
+
+
+@lengow
+class LengowMarketPlaceMapper(ImportMapper):
+    _model_name = 'lengow.market.place'
+
+    direct = [('homepage', 'homepage'),
+              ('description', 'description')]
+
+    @mapping
+    def name(self, record):
+        name = record['name']
+        if name is None:
+            name = _('Undefined')
+        return {'name': name}
+
+    @mapping
+    def backend_id(self, record):
+        return {'backend_id': self.backend_record.id}
+
+
+@lengow
+class LengowMarketPlaceImporter(LengowImporter):
+    _model_name = 'lengow.market.place'
+
+    _base_mapper = LengowMarketPlaceMapper

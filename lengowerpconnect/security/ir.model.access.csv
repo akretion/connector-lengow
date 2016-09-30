@@ -5,3 +5,5 @@
 "access_lengow_catalogue_user","lengow_catalogue lengow user","model_lengow_catalogue","group_lengow_user",1,0,0,0
 "access_lengow_product_product_manager","lengow_product_product lengow manager","model_lengow_product_product","group_lengow_manager",1,1,1,1
 "access_lengow_product_product_user","lengow_product_product lengow user","model_lengow_product_product","group_lengow_user",1,0,0,0
+"access_lengow_market_place_manager","lengow_market_place lengow manager","model_lengow_market_place","group_lengow_manager",1,1,1,1
+"access_lengow_market_place_user","lengow_market_place lengow user","model_lengow_market_place","group_lengow_user",1,0,0,0

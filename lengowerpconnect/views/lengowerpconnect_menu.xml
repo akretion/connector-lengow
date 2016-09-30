@@ -11,12 +11,20 @@
     <menuitem id="menu_lengow_backend"
         name="Backends"
         parent="menu_lengow_root"
-        action="action_lengow_backend"/>
+        action="action_lengow_backend"
+        sequence="10"/>
+
+    <menuitem id="menu_lengow_marketplace"
+        name="MarketPlaces"
+        parent="menu_lengow_root"
+        action="action_lengow_marketplace"
+        sequence="20"/>
 
     <menuitem id="menu_lengow_catalogue"
         name="Catalogues"
         parent="menu_lengow_root"
-        action="action_lengow_catalogue"/>
+        action="action_lengow_catalogue"
+        sequence="30"/>
 
     <menuitem id="menu_lengow_sale"
         name="Lengow"

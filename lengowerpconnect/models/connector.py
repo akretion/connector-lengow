@@ -13,7 +13,7 @@ def get_environment(session, model_name, backend_id):
 
 
 class LengowBinding(models.AbstractModel):
-    """ Abstract Model for the Bindigs.
+    """ Abstract Model for the Bindings.
 
     All the models used as bindings between Lengow and OpenERP
     (``lengow.product.product``, ...) should
@@ -23,7 +23,7 @@ class LengowBinding(models.AbstractModel):
     _inherit = 'external.binding'
     _description = 'Lengow Binding (abstract)'
 
-    # odoo_id = odoo-side id must be declared in concrete model
+    # openerp_id = odoo-side id must be declared in concrete model
     backend_id = fields.Many2one(
         comodel_name='lengow.backend',
         string='Lengow Backend',

@@ -29,11 +29,11 @@ class LengowProductBindingWizard(models.TransientModel):
             binding = self.env['lengow.product.product']
             for product in self.product_ids:
                 data = {'lengow_id': product.default_code,
-                        'odoo_id': product.id,
+                        'openerp_id': product.id,
                         'catalogue_id': wizard.catalogue_id.id,
                         'backend_id': wizard.catalogue_id.backend_id.id}
                 bind_record = binding.with_context(active_test=False).search(
-                    [('odoo_id', '=', product.id),
+                    [('openerp_id', '=', product.id),
                      ('catalogue_id', '=', wizard.catalogue_id.id),
                      ('backend_id', '=', wizard.catalogue_id.backend_id.id)])
                 if not bind_record:

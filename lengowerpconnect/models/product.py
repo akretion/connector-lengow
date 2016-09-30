@@ -14,7 +14,6 @@ from openerp.addons.connector.unit.mapper import ExportMapper
 from openerp.addons.connector.unit.mapper import mapping
 from openerp.addons.connector.unit.synchronizer import Exporter
 
-
 from openerp.addons.connector.connector import ConnectorUnit
 
 from .backend import lengow
@@ -24,17 +23,17 @@ from .connector import get_environment
 class LengowProductProduct(models.Model):
     _name = 'lengow.product.product'
     _inherit = 'lengow.binding'
-    _inherits = {'product.product': 'odoo_id'}
+    _inherits = {'product.product': 'openerp_id'}
     _description = 'Lengow Product'
 
     catalogue_id = fields.Many2one(comodel_name='lengow.catalogue',
                                    string='Lengow Catalogue',
                                    required=True,
                                    ondelete='restrict')
-    odoo_id = fields.Many2one(comodel_name='product.product',
-                              string='Product',
-                              required=True,
-                              ondelete='restrict')
+    openerp_id = fields.Many2one(comodel_name='product.product',
+                                 string='Product',
+                                 required=True,
+                                 ondelete='restrict')
     lengow_qty = fields.Float(string='Computed Stock Quantity',
                               help="Last computed quantity to send "
                                    "on Lengow.")
@@ -89,11 +88,11 @@ class ProductProduct(models.Model):
             [('catalogue_id.name', operator, value)])
 
         return [('id', 'in',
-                 bindings.mapped('odoo_id').ids)]
+                 bindings.mapped('openerp_id').ids)]
 
     lengow_bind_ids = fields.One2many(
         comodel_name='lengow.product.product',
-        inverse_name='odoo_id',
+        inverse_name='openerp_id',
         string='Lengow Bindings',
     )
     lengow_catalogue_ids = fields.Many2many(string='Lengow Catalogues',
@@ -117,7 +116,7 @@ class ProductProduct(models.Model):
         res = super(ProductProduct, self).write(vals)
         if 'active' in vals and not vals.get('active'):
             bind_records = self.env['lengow.product.product'].search(
-                [('odoo_id', 'in', self.ids)])
+                [('openerp_id', 'in', self.ids)])
             if bind_records:
                 bind_records.write({'active': vals.get('active')})
         return res
@@ -132,7 +131,7 @@ class ProductTemplate(models.Model):
             [('catalogue_id.name', operator, value)])
 
         return [('id', 'in',
-                 bindings.mapped('odoo_id.product_tmpl_id').ids)]
+                 bindings.mapped('openerp_id.product_tmpl_id').ids)]
 
     lengow_catalogue_ids = fields.Many2many(
         string='Lengow Catalogues',
