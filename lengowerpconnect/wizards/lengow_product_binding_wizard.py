@@ -13,7 +13,8 @@ class LengowProductBindingWizard(models.TransientModel):
                                    required=True,
                                    ondelete='cascade')
     product_ids = fields.Many2many(string='Products',
-                                   comodel_name='product.product')
+                                   comodel_name='product.product',
+                                   ondelete='cascade')
 
     @api.model
     def default_get(self, fields_list):

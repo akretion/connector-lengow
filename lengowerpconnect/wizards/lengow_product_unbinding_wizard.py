@@ -11,7 +11,8 @@ class LengowProductUnbindingWizard(models.TransientModel):
     lengow_product_ids = fields.Many2many(
         string='Products',
         comodel_name='lengow.product.product',
-        relation='leng_prod_unbind_wizard_rel')
+        relation='leng_prod_unbind_wizard_rel',
+        ondelete='cascade')
 
     @api.model
     def default_get(self, fields_list):
