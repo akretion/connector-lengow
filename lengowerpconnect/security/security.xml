@@ -24,5 +24,18 @@
             ]" />
         </record>
 
+        <record id="lengow_backend_multi_company_rule" model="ir.rule">
+            <field name="name">Lengow Backend Multi Company</field>
+            <field name="model_id" ref="model_lengow_backend"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+        </record>
+
+        <record id="lengow_catalogue_multi_company_rule" model="ir.rule">
+            <field name="name">Lengow Catalogue Multi Company</field>
+            <field name="model_id" ref="model_lengow_catalogue"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">['|',('backend_id.company_id.id','=',False),('backend_id.company_id.id','child_of',[user.company_id.id])]</field>
+        </record>
     </data>
 </openerp>
