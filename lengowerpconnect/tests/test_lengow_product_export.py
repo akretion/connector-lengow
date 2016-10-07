@@ -33,7 +33,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
             Export a product and check result file
         """
         env = get_environment(ConnectorSession.from_env(self.env),
-                              'lengow.product.product', self.backend.id)
+                              'lengow.product.product', self.backend30.id)
         products_exporter = env.get_connector_unit(ProductExporter)
 
         products_exporter.run(self.catalogue,
@@ -85,7 +85,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         self.catalogue.write({'default_lang_id': fr.id})
 
         env = get_environment(ConnectorSession.from_env(self.env),
-                              'lengow.product.product', self.backend.id)
+                              'lengow.product.product', self.backend30.id)
         products_exporter = env.get_connector_unit(ProductExporter)
 
         products_exporter.run(self.catalogue,
@@ -141,7 +141,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         })
         self.catalogue.write({'product_pricelist_id': pricelist.id})
         env = get_environment(ConnectorSession.from_env(self.env),
-                              'lengow.product.product', self.backend.id)
+                              'lengow.product.product', self.backend30.id)
         products_exporter = env.get_connector_unit(ProductExporter)
 
         products_exporter.run(self.catalogue,

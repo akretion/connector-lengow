@@ -97,7 +97,7 @@ class SetUpLengowBase(common.TransactionCase):
         self.session = ConnectorSession(self.env.cr, self.env.uid,
                                         context=self.env.context)
         warehouse = self.env.ref('stock.warehouse0')
-        self.backend = self.backend_model.create(
+        self.backend20 = self.backend_model.create(
             {'name': 'Test Lengow',
              'version': '2.0',
              'location': 'http://anyurl',
@@ -105,9 +105,17 @@ class SetUpLengowBase(common.TransactionCase):
              'secret': '66eb2d56a4e930b0e12193b954d6b2e4',
              'warehouse_id': warehouse.id}
         )
+        self.backend30 = self.backend_model.create(
+            {'name': 'Test Lengow',
+             'version': '3.0',
+             'location': 'http://anyurl',
+             'access_token': 'a4a506440102b8d06a0f63fdd1eadd5f',
+             'secret': '66eb2d56a4e930b0e12193b954d6b2e4',
+             'warehouse_id': warehouse.id}
+        )
         self.catalogue = self.catalogue_model.create(
             {'name': 'Test Lengow Catalogue',
-             'backend_id': self.backend.id,
+             'backend_id': self.backend20.id,
              'product_ftp': False,
              'product_filename': 'products.csv',
              'warehouse_id': warehouse.id}

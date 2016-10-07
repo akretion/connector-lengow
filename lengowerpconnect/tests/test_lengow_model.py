@@ -45,7 +45,7 @@ class TestToken(common.SetUpLengowBase):
     def test_get_token_fail(self):
         with mock.patch(self.post_method) as mock_post:
             env = get_environment(ConnectorSession.from_env(self.env),
-                                  'lengow.market.place', self.backend.id)
+                                  'lengow.market.place', self.backend30.id)
             # mock post request for token
             mock_post = self._configure_mock_request('token_fail', mock_post)
             a = LengowMarketPlaceAdapter(env)
@@ -59,7 +59,7 @@ class TestToken(common.SetUpLengowBase):
     def test_get_token(self):
         with mock.patch(self.post_method) as mock_post:
             env = get_environment(ConnectorSession.from_env(self.env),
-                                  'lengow.market.place', self.backend.id)
+                                  'lengow.market.place', self.backend30.id)
             # mock post request for token
             mock_post = self._configure_mock_request('token', mock_post)
             a = LengowMarketPlaceAdapter(env)
@@ -93,7 +93,7 @@ class TestBackendSynchronize(common.SetUpLengowBase):
             # ---------------------------------
             # Test MarketPlace Creation
             # ---------------------------------
-            self.backend.synchronize_metadata()
+            self.backend30.synchronize_metadata()
             mock_get.assert_called_with(
                 'http://anyurl/v3.0/marketplaces/',
                 params={'account_id': self.expected_account},
@@ -114,6 +114,6 @@ class TestBackendSynchronize(common.SetUpLengowBase):
             places.write({'homepage': fake_homepage})
             self.assertTrue((all(place.homepage == fake_homepage
                                  for place in places)))
-            self.backend.synchronize_metadata()
+            self.backend30.synchronize_metadata()
             self.assertFalse((all(place.homepage == fake_homepage
                                   for place in places)))

@@ -11,7 +11,7 @@ from openerp.addons.connector.unit.mapper import ImportMapper
 from openerp.addons.connector.unit.mapper import mapping
 from openerp.addons.connector.session import ConnectorSession
 
-from .backend import lengow
+from .backend import lengow, lengow30
 from .adapter import GenericAdapter
 from .import_synchronizer import import_batch
 from .import_synchronizer import DirectBatchImporter
@@ -36,7 +36,7 @@ class LengowBackend(models.Model):
         to add a version from an ``_inherit`` does not constrain
         to redefine the ``version`` field in the ``_inherit`` model.
         """
-        return [('2.0', '2.0+')]
+        return [('2.0', '2.0'), ('3.0', '3.0')]
 
     version = fields.Selection(selection='select_versions', required=True)
     location = fields.Char(
@@ -262,7 +262,7 @@ class LengowMarketPlace(models.Model):
                 mp.backend_id.warehouse_id)
 
 
-@lengow
+@lengow30
 class LengowMarketPlaceAdapter(GenericAdapter):
     _model_name = 'lengow.market.place'
     _api = "v3.0/marketplaces/"

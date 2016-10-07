@@ -9,3 +9,6 @@ lengow = backend.Backend('lengow')
 
 lengow20 = backend.Backend(parent=lengow, version='2.0')
 """ Lengow Backend for version 2.0 """
+
+lengow30 = backend.Backend(parent=lengow, version='3.0')
+""" Lengow Backend for version 3.0 """
