@@ -166,10 +166,12 @@ class ProductExportMapper(ExportMapper):
             price = record.with_context(pricelist=product_pricelist_id).price
         else:
             price = record.lst_price
-        return {'PRICE_PRODUCT': price}
+        return {'PRICE_PRODUCT': round(price, 2) if price else ''}
 
     @mapping
     def CATEGORY(self, record):
+        cat = record.categ_id.display_name or ''
+        cat = cat.replace('/', '>')
         return {'CATEGORY': record.categ_id.display_name or ''}
 
     @mapping
