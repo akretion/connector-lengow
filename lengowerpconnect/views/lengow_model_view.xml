@@ -170,7 +170,7 @@
                             <h1><field name="name" class="oe_inline" attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/></h1>
                         </div>
                         <group string="Informations">
-                            <field name="backend_id" attrs="{'readonly': [('backend_version', '=', '3.0')]}"/>
+                            <field name="backend_id" attrs="{'readonly': [('backend_version', '=', '3.0')]}" required='True'/>
                             <field name="lengow_id" string='Code' attrs="{'invisible': [('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
                             <field name="backend_version" invisible='1'/>
                             <field name="homepage" widget='url' attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
