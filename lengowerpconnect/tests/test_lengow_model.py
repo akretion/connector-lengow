@@ -12,7 +12,7 @@ from ..models.lengow_model import LengowMarketPlaceAdapter
 from openerp.osv.expression import TRUE_LEAF
 
 
-class TestUpdateBackendCatalogue(common.SetUpLengowBase):
+class TestUpdateBackendCatalogue(common.SetUpLengowBase20):
 
     def setUp(self):
         super(TestUpdateBackendCatalogue, self).setUp()
@@ -34,7 +34,7 @@ class TestUpdateBackendCatalogue(common.SetUpLengowBase):
             self.catalogue.write({'backend_id': backend.id})
 
 
-class TestToken(common.SetUpLengowBase):
+class TestToken(common.SetUpLengowBase30):
     '''
         Each request made to Lengow need a authentification token
     '''
@@ -45,7 +45,7 @@ class TestToken(common.SetUpLengowBase):
     def test_get_token_fail(self):
         with mock.patch(self.post_method) as mock_post:
             env = get_environment(ConnectorSession.from_env(self.env),
-                                  'lengow.market.place', self.backend30.id)
+                                  'lengow.market.place', self.backend.id)
             # mock post request for token
             mock_post = self._configure_mock_request('token_fail', mock_post)
             a = LengowMarketPlaceAdapter(env)
@@ -59,7 +59,7 @@ class TestToken(common.SetUpLengowBase):
     def test_get_token(self):
         with mock.patch(self.post_method) as mock_post:
             env = get_environment(ConnectorSession.from_env(self.env),
-                                  'lengow.market.place', self.backend30.id)
+                                  'lengow.market.place', self.backend.id)
             # mock post request for token
             mock_post = self._configure_mock_request('token', mock_post)
             a = LengowMarketPlaceAdapter(env)
@@ -75,7 +75,7 @@ class TestToken(common.SetUpLengowBase):
             self.assertEqual(account, self.expected_account)
 
 
-class TestBackendSynchronize(common.SetUpLengowBase):
+class TestBackendSynchronize(common.SetUpLengowBase30):
     '''
         Test the synchronisation of Marketplaces between Odoo and Lengow
     '''
@@ -93,7 +93,7 @@ class TestBackendSynchronize(common.SetUpLengowBase):
             # ---------------------------------
             # Test MarketPlace Creation
             # ---------------------------------
-            self.backend30.synchronize_metadata()
+            self.backend.synchronize_metadata()
             mock_get.assert_called_with(
                 'http://anyurl/v3.0/marketplaces/',
                 params={'account_id': self.expected_account},
@@ -114,6 +114,6 @@ class TestBackendSynchronize(common.SetUpLengowBase):
             places.write({'homepage': fake_homepage})
             self.assertTrue((all(place.homepage == fake_homepage
                                  for place in places)))
-            self.backend30.synchronize_metadata()
+            self.backend.synchronize_metadata()
             self.assertFalse((all(place.homepage == fake_homepage
                                   for place in places)))

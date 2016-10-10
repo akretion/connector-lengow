@@ -4,7 +4,7 @@
 from . import common
 
 
-class TestLengowProductBinding(common.SetUpLengowBase):
+class TestLengowProductBinding(common.SetUpLengowBase20):
 
     def setUp(self):
         super(TestLengowProductBinding, self).setUp()
@@ -29,7 +29,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # A binding record should exists
         bind_record = self.product_bind_model.search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
@@ -45,7 +45,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # The binding record should be unreachable
         bind_record = self.product_bind_model.search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
@@ -55,7 +55,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         bind_record = self.product_bind_model.with_context(
             active_test=False).search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
@@ -69,7 +69,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # The binding record should be re-activated
         bind_record = self.product_bind_model.search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
@@ -92,7 +92,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # A binding record should exists
         bind_record = self.product_bind_model.search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
@@ -106,7 +106,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # The binding record should be unreachable
         bind_record = self.product_bind_model.search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 
@@ -120,7 +120,7 @@ class TestLengowProductBinding(common.SetUpLengowBase):
         # The binding record should be still unreachable
         bind_record = self.product_bind_model.search(
             [('openerp_id', '=', self.product.id),
-             ('backend_id', '=', self.backend20.id),
+             ('backend_id', '=', self.backend.id),
              ('catalogue_id', '=', self.catalogue.id),
              ('lengow_id', '=', self.product.default_code)])
 

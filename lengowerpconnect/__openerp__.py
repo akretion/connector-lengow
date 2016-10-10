@@ -16,8 +16,7 @@
         "connector_ecommerce",
         "product",
         "product_sequence",
-        "sale",
-        "stock"
+        "sale_stock",
     ],
     "data": [
         'security/security.xml',

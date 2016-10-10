@@ -96,34 +96,46 @@ class SetUpLengowBase(common.TransactionCase):
 
         self.session = ConnectorSession(self.env.cr, self.env.uid,
                                         context=self.env.context)
-        warehouse = self.env.ref('stock.warehouse0')
-        self.backend20 = self.backend_model.create(
+        self.warehouse = self.env.ref('stock.warehouse0')
+        self.post_method = 'openerp.addons.lengowerpconnect.models'\
+                           '.adapter.requests.post'
+        self.get_method = 'openerp.addons.lengowerpconnect.models'\
+                          '.adapter.requests.get'
+
+
+class SetUpLengowBase20(SetUpLengowBase):
+
+    def setUp(self):
+        super(SetUpLengowBase20, self).setUp()
+        self.backend = self.backend_model.create(
             {'name': 'Test Lengow',
              'version': '2.0',
              'location': 'http://anyurl',
              'access_token': 'a4a506440102b8d06a0f63fdd1eadd5f',
              'secret': '66eb2d56a4e930b0e12193b954d6b2e4',
-             'warehouse_id': warehouse.id}
+             'warehouse_id': self.warehouse.id}
         )
-        self.backend30 = self.backend_model.create(
+
+        self.catalogue = self.catalogue_model.create(
+            {'name': 'Test Lengow Catalogue',
+             'backend_id': self.backend.id,
+             'product_ftp': False,
+             'product_filename': 'products.csv',
+             'warehouse_id': self.warehouse.id})
+
+
+class SetUpLengowBase30(SetUpLengowBase):
+
+    def setUp(self):
+        super(SetUpLengowBase30, self).setUp()
+        self.backend = self.backend_model.create(
             {'name': 'Test Lengow',
              'version': '3.0',
              'location': 'http://anyurl',
              'access_token': 'a4a506440102b8d06a0f63fdd1eadd5f',
              'secret': '66eb2d56a4e930b0e12193b954d6b2e4',
-             'warehouse_id': warehouse.id}
+             'warehouse_id': self.warehouse.id}
         )
-        self.catalogue = self.catalogue_model.create(
-            {'name': 'Test Lengow Catalogue',
-             'backend_id': self.backend20.id,
-             'product_ftp': False,
-             'product_filename': 'products.csv',
-             'warehouse_id': warehouse.id}
-        )
-        self.post_method = 'openerp.addons.lengowerpconnect.models'\
-                           '.adapter.requests.post'
-        self.get_method = 'openerp.addons.lengowerpconnect.models'\
-                          '.adapter.requests.get'
         self.expected_token = "6b7280eb-e7d4-4b94-a829-7b3853a20126"
         self.expected_user = "1"
         self.expected_account = 1
