@@ -84,6 +84,7 @@ class LengowBackend(models.Model):
                                     comodel_name='lengow.catalogue',
                                     inverse_name='backend_id')
     binded_products_count = fields.Float(compute='_count_binded_products')
+    id_client = fields.Char('Lengow Id Client')
 
     def _count_binded_products(self):
         for catalogue in self.catalogue_ids:
@@ -210,7 +211,8 @@ class LengowMarketPlace(models.Model):
     _description = 'Lengow Market Place'
     _parent_name = 'backend_id'
 
-    name = fields.Char(string='Name')
+    name = fields.Char(string='Name',
+                       required=True)
     homepage = fields.Char(string='Home Page')
     description = fields.Text(string='Text')
     specific_account_analytic_id = fields.Many2one(
@@ -239,6 +241,7 @@ class LengowMarketPlace(models.Model):
         comodel_name='stock.warehouse',
         string='warehouse',
         compute='_get_warehouse_id')
+    backend_version = fields.Selection(related='backend_id.version')
 
     @api.multi
     def _get_account_analytic_id(self):

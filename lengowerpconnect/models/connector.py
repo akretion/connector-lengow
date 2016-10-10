@@ -30,7 +30,8 @@ class LengowBinding(models.AbstractModel):
         required=True,
         ondelete='restrict',
     )
-    lengow_id = fields.Char(string='ID on Lengow')
+    lengow_id = fields.Char(string='ID on Lengow',
+                            required=True)
 
     _sql_constraints = [
         ('lengow_uniq', 'unique(backend_id, lengow_id)',

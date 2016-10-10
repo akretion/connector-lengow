@@ -9,7 +9,9 @@
             <field name="arch" type="xml">
                 <form string="Lengow Backend">
                     <header>
-                        <button name="synchronize_metadata" type="object" string="Synchronize Metadata" class="oe_highlight" groups="lengowerpconnect.group_lengow_manager"/>
+                        <button name="synchronize_metadata" type="object"
+                        string="Synchronize Metadata" class="oe_highlight" groups="lengowerpconnect.group_lengow_manager"
+                        attrs="{'invisible': [('version', '!=', '3.0')]}"/>
                     </header>
                     <sheet>
                         <div class="oe_right oe_button_box" name="buttons">
@@ -31,8 +33,9 @@
                                         <field name="version" colspan="4"/>
                                         <field name="location" placeholder="e.g. http://my.lengow.com"
                                             colspan="4" widget="url"/>
-                                        <field name="access_token" colspan="2"/>
-                                        <field name="secret" password="1" colspan="2"/>
+                                        <field name="access_token" colspan="2" attrs="{'invisible': [('version', '!=', '3.0')]}"/>
+                                        <field name="secret" password="1" colspan="2" attrs="{'invisible': [('version', '!=', '3.0')]}"/>
+                                        <field name="id_client" colspan="2" attrs="{'invisible': [('version', '!=', '2.0')]}"/>
                                     </group>
                                 </page>
                                 <page string="Catalogues" name="catalogue">
@@ -160,16 +163,18 @@
             <field name="name">lengow.market.place.form</field>
             <field name="model">lengow.market.place</field>
             <field name="arch" type="xml">
-                <form string="Lengow MarketPlace" create="0" delete="0">
+                <form string="Lengow MarketPlace">
                     <sheet>
                         <div class="oe_title">
                             <label class="oe_edit_only" for="name" string="MarketPlace"/>
-                            <h1><field name="name" class="oe_inline" readonly="1"/></h1>
+                            <h1><field name="name" class="oe_inline" attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/></h1>
                         </div>
                         <group string="Informations">
-                            <field name="backend_id" readonly="1"/>
-                            <field name="homepage" widget='url' readonly="1"/>
-                            <field name="description" readonly="1"/>
+                            <field name="backend_id" attrs="{'readonly': [('backend_version', '=', '3.0')]}"/>
+                            <field name="lengow_id" string='Code' attrs="{'invisible': [('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
+                            <field name="backend_version" invisible='1'/>
+                            <field name="homepage" widget='url' attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
+                            <field name="description" attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
                         </group>
                         <group string="Options" name="options">
                             <field name="account_analytic_id" groups="sale.group_analytic_accounting" class="oe_read_only"/>
@@ -192,7 +197,7 @@
             <field name="name">lengow.market.place.tree</field>
             <field name="model">lengow.market.place</field>
             <field name="arch" type="xml">
-                <tree string="Lengow MarketPlace" create="0" delete="0">
+                <tree string="Lengow MarketPlace">
                     <field name="name"/>
                     <field name="homepage"/>
                 </tree>
