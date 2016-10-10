@@ -265,11 +265,8 @@ class ProductExporter(Exporter):
                              session_factory=port_session_factory) as ftp_conn:
             target_name = catalogue.product_ftp_directory\
                 + '/' + ir_attachment.datas_fname
-            if ftp_conn.path.isfile(target_name):
-                raise Exception("%s already exists" % target_name)
-            else:
-                with ftp_conn.open(target_name, mode='wb') as fileobj:
-                    fileobj.write(base64.b64decode(ir_attachment.datas))
+            with ftp_conn.open(target_name, mode='wb') as fileobj:
+                fileobj.write(base64.b64decode(ir_attachment.datas))
 
     def run(self, catalogue=None, products=None):
         data = None

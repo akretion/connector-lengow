@@ -204,6 +204,13 @@ class LengowCatalogue(models.Model):
                                     ' reference !'))
         return super(LengowCatalogue, self).write(vals)
 
+    _sql_constraints = [
+        ('product_filename_uniq', 'unique(product_filename, product_ftp_host'
+         ',product_ftp_directory)',
+         'A catalogue already exists with the same product filename'
+         ' in the same directory on the same host.'),
+    ]
+
 
 class LengowMarketPlace(models.Model):
     _name = 'lengow.market.place'
