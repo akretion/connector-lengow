@@ -85,6 +85,7 @@ class LengowBackend(models.Model):
                                     inverse_name='backend_id')
     binded_products_count = fields.Float(compute='_count_binded_products')
     id_client = fields.Char('Lengow Id Client')
+    import_orders_from_date = fields.Date('Import Orders from Date')
 
     def _count_binded_products(self):
         for catalogue in self.catalogue_ids:
@@ -107,6 +108,23 @@ class LengowBackend(models.Model):
                 _(u"Check your configuration, we can't get the data. "
                   u"Here is the error:\n%s") %
                 str(e).decode('utf-8', 'ignore'))
+
+    @api.multi
+    def import_sale_orders(self):
+        import_start_time = fields.Date.today()
+        session = ConnectorSession.from_env(self.env)
+        if self.import_orders_from_date:
+            from_date = self.import_orders_from_date or None
+        else:
+            from_date = None
+        import_batch.delay(
+            session,
+            'lengow.sale.order',
+            self.id, {
+                'from_date': from_date,
+                'to_date': import_start_time},
+            priority=1)
+        self.write({'import_orders_from_date': import_start_time})
 
 
 class LengowCatalogue(models.Model):

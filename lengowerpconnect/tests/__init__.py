@@ -5,3 +5,4 @@ from . import common
 from . import test_lengow_model
 from . import test_lengow_product_binding_wizard
 from . import test_lengow_product_export
+from . import test_lengow_sale

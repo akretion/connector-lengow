@@ -50,6 +50,12 @@
                                         <field name="warehouse_id"/>
                                     </group>
                                 </page>
+                                <page name='imports' String='Imports'>
+                                    <group col="4">
+                                         <field name='import_orders_from_date' colspan="2"/>
+                                         <button name="import_sale_orders" type="object" string="Import Sale Orders"  class="oe_highlight" colspan="2"/>
+                                    </group>
+                                </page>
                             </notebook>
                         </group>
                     </sheet>
@@ -126,9 +132,9 @@
                         </group>
                         <notebook>
                             <page name='exports' String='Exports'>
-                                <group>
-                                     <button name="export_binded_products" type="object" string="Export Products"  class="oe_highlight"/>
-                                     <field name='last_export_date' readonly="1"/>
+                                <group col="4">
+                                     <field name='last_export_date' readonly="1" colspan="2"/>
+                                     <button name="export_binded_products" type="object" string="Export Products"  class="oe_highlight" colspan="2"/>
                                 </group>
                             </page>
                         </notebook>
