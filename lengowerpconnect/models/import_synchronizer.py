@@ -23,6 +23,27 @@ class LengowImporter(Importer):
         self.lengow_id = None
         self.lengow_record = None
 
+    def _import_dependency(self, lengow_id, lengow_data, binding_model,
+                           importer_class=None):
+        """ Import a dependency. """
+
+        if not lengow_id:
+            return
+        if importer_class is None:
+            importer_class = LengowImporter
+        binder = self.binder_for(binding_model)
+        if binder.to_openerp(lengow_id) is None:
+            importer = self.unit_for(importer_class, model=binding_model)
+            importer.run(lengow_id, lengow_data)
+
+    def _import_dependencies(self):
+        """ Import the dependencies for the record
+
+        Import of dependencies can be done manually or by calling
+        :meth:`_import_dependency` for each dependency.
+        """
+        return
+
     def _get_binding(self):
         return self.binder.to_openerp(self.lengow_id, browse=True)
 
@@ -59,6 +80,8 @@ class LengowImporter(Importer):
         self.lengow_record = lengow_data
 
         binding = self._get_binding()
+
+        self._import_dependencies()
 
         map_record = self._map_data()
 
@@ -111,11 +134,16 @@ class DelayedBatchImporter(BatchImporter):
 
     def _import_record(self, record_id, record_data, **kwargs):
         """ Delay the import of the records"""
+        description = 'Import %s %s from Lengow Backend %s' %\
+            (self.model._name,
+             record_id,
+             self.backend_record.name)
         import_record.delay(self.session,
                             self.model._name,
                             self.backend_record.id,
                             record_id,
                             record_data,
+                            description=description,
                             **kwargs)
 
 
