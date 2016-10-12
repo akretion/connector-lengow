@@ -172,7 +172,7 @@ class ProductExportMapper(ExportMapper):
     def CATEGORY(self, record):
         cat = record.categ_id.display_name or ''
         cat = cat.replace('/', '>')
-        return {'CATEGORY': record.categ_id.display_name or ''}
+        return {'CATEGORY': cat}
 
     @mapping
     def URL_PRODUCT(self, record):
