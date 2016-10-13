@@ -2,9 +2,11 @@
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import logging
+import hashlib
 
 from openerp.addons.connector.unit.synchronizer import Importer
 from openerp.addons.connector.queue.job import job
+from openerp.addons.connector.unit.mapper import ImportMapper, mapping
 
 from .connector import get_environment
 
@@ -12,7 +14,9 @@ _logger = logging.getLogger(__name__)
 
 
 class LengowImporter(Importer):
-    """ Base importer for Magento """
+    """ Base importer for Lengow """
+
+    _discriminant_fields = []
 
     def __init__(self, connector_env):
         """
@@ -26,15 +30,11 @@ class LengowImporter(Importer):
     def _import_dependency(self, lengow_id, lengow_data, binding_model,
                            importer_class=None):
         """ Import a dependency. """
-
-        if not lengow_id:
-            return
         if importer_class is None:
             importer_class = LengowImporter
-        binder = self.binder_for(binding_model)
-        if binder.to_openerp(lengow_id) is None:
-            importer = self.unit_for(importer_class, model=binding_model)
-            importer.run(lengow_id, lengow_data)
+
+        importer = self.unit_for(importer_class, model=binding_model)
+        importer.run(lengow_id, lengow_data)
 
     def _import_dependencies(self):
         """ Import the dependencies for the record
@@ -70,12 +70,31 @@ class LengowImporter(Importer):
         _logger.debug('%d updated from Lengow %s', binding, self.lengow_id)
         return
 
+    def _generate_hash_key(self, record_data):
+        '''
+            This method is used to generate a key from record not identified
+            on Lengow.
+            For exemple, customers doesn't have any id on Lengow.
+            The connector will generate one based on select data such as name,
+            email and city.
+        '''
+        discriminant_values = dict((key, record_data[key])
+                                   for key in self._discriminant_fields)
+        hashtring = ''.join(discriminant_values)
+        if not hashtring:
+            return False
+        hash_object = hashlib.sha1(hashtring.encode())
+        return hash_object.hexdigest()
+
     def run(self, lengow_id, lengow_data):
         """ Run the synchronization
 
         :param lengow_id: identifier of the record on Lengow
-        :param lengow_id: identifier of the record on Lengow
+        :param lengow_data: data of the record on Lengow
         """
+        if not lengow_id:
+            lengow_id = self._generate_hash_key(lengow_data)
+
         self.lengow_id = lengow_id
         self.lengow_record = lengow_data
 
@@ -145,6 +164,16 @@ class DelayedBatchImporter(BatchImporter):
                             record_data,
                             description=description,
                             **kwargs)
+
+
+class LengowImportMapper(ImportMapper):
+    _model_name = None
+
+    direct = []
+
+    @mapping
+    def backend_id(self, record):
+        return {'backend_id': self.backend_record.id}
 
 
 @job(default_channel='root.lengow')

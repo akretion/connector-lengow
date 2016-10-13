@@ -5,12 +5,13 @@ import logging
 
 from openerp import fields, models
 import openerp.addons.decimal_precision as dp
-from openerp.addons.connector.unit.mapper import ImportMapper
+from openerp.addons.connector.unit.mapper import mapping
 
 from .backend import lengow20
 from .adapter import GenericAdapter20
 from .import_synchronizer import DelayedBatchImporter
 from .import_synchronizer import LengowImporter
+from .import_synchronizer import LengowImportMapper
 
 _logger = logging.getLogger(__name__)
 
@@ -30,12 +31,12 @@ class LengowSaleOrder(models.Model):
         inverse_name='lengow_order_id',
         string='Lengow Order Lines'
     )
-    total_amount = fields.Float(
-        string='Total amount',
+    lengow_total_amount = fields.Float(
+        string='Lengow Total amount',
         digits_compute=dp.get_precision('Account')
     )
-    total_amount_tax = fields.Float(
-        string='Total amount w. tax',
+    lengow_total_amount_tax = fields.Float(
+        string='Lengow Total amount w. tax',
         digits_compute=dp.get_precision('Account')
     )
     lengow_order_id = fields.Char(string='Lengow Order ID')
@@ -65,8 +66,10 @@ class LengowSaleOrderAdapter(GenericAdapter20):
         id_group = filters.pop('id_group', '0')
         id_flux = filters.pop('id_flux', 'orders')
         state = filters.pop('state', 'processing')
-        from_date = filters.pop('from_date', fields.Date.today())
-        to_date = filters.pop('to_date', fields.Date.today())
+        if not from_date:
+            from_date = fields.Date.today()
+        if not to_date:
+            to_date = fields.Date.today()
         self._api = str(self._api % (from_date,
                                      to_date,
                                      id_client,
@@ -96,19 +99,50 @@ class SaleOrderBatchImporter(DelayedBatchImporter):
             filters,
             from_date=from_date,
             to_date=to_date)
-        orders_data = result['statistics']['commandes']['commande'] or []
-        order_ids = [data['com_id'] for data in orders_data]
+        orders_data = result['statistics']['orders']['order'] or []
+        order_ids = [data['order_id'] for data in orders_data]
         _logger.info('Search for lengow sale orders %s returned %s',
                      filters, order_ids)
         for order_data in orders_data:
-            self._import_record(order_data['com_id'], order_data)
+            self._import_record(order_data['order_id'], order_data)
 
 
 @lengow20
-class SaleOrderMapper(ImportMapper):
+class SaleOrderMapper(LengowImportMapper):
     _model_name = 'lengow.sale.order'
 
-    direct = []
+    direct = [('order_id', 'client_order_ref'),
+              ('order_purchase_date', 'date_order'),
+              ('order_comments', 'note')
+              ('order_amount', 'lengow_total_amount'),
+              ('order_tax', 'lengow_total_amount_tax')]
+
+    def _get_partner_id(self, partner_data):
+        binding_model = 'lengow.res.partner'
+        importer = self.unit_for(LengowImporter, model=binding_model)
+        partner_lengow_id = importer._generate_hash_key(partner_data)
+        binder = self.binder_for(binding_model)
+        partner_id = binder.to_openerp(partner_lengow_id, unwrap=True)
+        assert partner_id is not None, (
+            "partner %s should have been imported in "
+            "LengowSaleOrderImporter._import_dependencies"
+            % partner_data)
+        return partner_id
+
+    @mapping
+    def partner_id(self, record):
+        partner_id = self._get_partner_id(record['billing_address'])
+        return {'partner_id': partner_id,
+                'partner_invoice_id': partner_id}
+
+    @mapping
+    def partner_shipping_id(self, record):
+        partner_id = self._get_partner_id(record['delivery_address'])
+        return {'partner_shipping_id': partner_id}
+
+    @mapping
+    def user_id(self, record):
+        return {'user_id': False}
 
 
 @lengow20
@@ -116,6 +150,17 @@ class LengowSaleOrderImporter(LengowImporter):
     _model_name = 'lengow.sale.order'
 
     _base_mapper = SaleOrderMapper
+
+    def _import_dependencies(self):
+        record = self.lengow_record
+        billing_partner_data = record['billing_address']
+        self._import_dependency(False,
+                                billing_partner_data,
+                                'lengow.res.partner')
+        delivery_partner_data = record['delivery_address']
+        self._import_dependency(False,
+                                delivery_partner_data,
+                                'lengow.res.partner')
 
 
 class LengowSaleOrderLine(models.Model):

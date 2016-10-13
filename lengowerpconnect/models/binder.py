@@ -17,6 +17,7 @@ class LengowModelBinder(LengowBinder):
     _model_name = [
         'lengow.market.place',
         'lengow.sale.order',
+        'lengow.res.partner',
     ]
 
     def to_openerp(self, external_id, unwrap=False, browse=False):

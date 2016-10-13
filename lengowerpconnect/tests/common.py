@@ -8,6 +8,7 @@ from openerp.addons.connector.session import ConnectorSession
 class SetUpLengowBase(common.TransactionCase):
     """ Base class - Test the imports from a Lengow Mock.
     """
+
     def _configure_mock_request(self, key, mock_request):
         data = self.json_data
         mock_request.return_value.status_code = data[key]['status_code']
@@ -56,148 +57,148 @@ class SetUpLengowBase20(SetUpLengowBase):
                 'status_code': 200,
                 'json': {
                     "statistics": {
-                        "-ip": "185.61.176.129",
-                        "-server": "Oxalide",
-                        "-timeGenerated": "2016-10-10 10:59:13.582742",
-                        "-version": "1.0",
-                        "countCommandes": "431",
-                        "countCommandesAmazon": "283",
-                        "countCommandesRueducommerce": "4",
-                        "countCommandesPriceminister": "1",
-                        "countCommandesCdiscount": "110",
-                        "commandes": {
-                            "commande": [{
-                                "marketplace": "Amazon",
-                                "idFlux": "23999",
-                                "status": "accept",
-                                "com_id": "5541-2121515-6705141",
-                                "com_mrid": "5498-2121515-68905141",
-                                "com_refid": "9804-2121515-6705141",
-                                "com_external_id": "789999",
-                                "com_payement_date": "2016-10-01",
-                                "com_payement_heure": "04:51:24",
-                                "com_purchase_date": "2016-10-01",
-                                "com_purchase_heure": "04:51:24",
-                                "com_fact_nom": "Bahadir AAAA",
-                                "com_fact_email": "AAAA@marketplace.amazon.de",
-                                "com_fact_adresse": "Römerstraße 19a",
-                                "com_fact_adresse_complement": " Bayern",
-                                "com_fact_cp": "93352",
-                                "com_fact_ville": "Rohr",
-                                "com_fact_pays": "DE",
-                                "com_fact_pays_iso": "DE",
-                                "com_fact_telephone_home": "00000089492",
-                                "com_fact_full": "AAA lengow 44000 Nantes",
-                                "liv_fact_nom": "Bahadir AAAA",
-                                "liv_fact_adresse": "AAA Lengow",
-                                "liv_fact_adresse_complement": " Bayern",
-                                "liv_fact_cp": "93352",
-                                "liv_fact_ville": "Rohr",
-                                "liv_fact_pays": "DE",
-                                "liv_fact_pays_iso": "DE",
-                                "liv_fact_telephone_home": "0000089492",
-                                "liv_fact_full": "AAA Lengow 44000 Nantes",
-                                "com_montant_commande": "105.85",
-                                "com_montant_tax": "0.00",
-                                "com_nb_article": "1",
-                                "com_shipping": "5.9",
-                                "com_shipping_description": "Standard",
-                                "com_commission": "0.0",
-                                "com_frais_traitement": "0",
-                                "com_shipped_date": "2016-10-01 09:32:16",
-                                "com_currency": "EUR",
-                                "com_deliveringByMarketPlace": "0",
-                                "panier": {
+                        "-ip": "127.0.0.1",
+                        "-timeGenerated": "2013-09-16 12:00:00.120000",
+                        "parsererror": {
+                            "-style": "display: block; white-space: pre;"
+                            " border: 2px solid #c77; padding: 0 1em 0 1em;"
+                            " margin: 1em; background-color:"
+                            " #fdd; color: black",
+                            "h3": ["This page contains the following errors:",
+                                   "Below is a rendering of the page up to the"
+                                   " first error."],
+                            "div": {
+                                "-style": "font-family:monospace;"
+                                          "font-size:12px",
+                                "#text": "error on line 243 at column 5:"
+                                         " error parsing attribute name"}
+                        },
+                        "orders_count": {
+                            "count_total": "435",
+                            "count_by_marketplace": {
+                                "spartoo": "33",
+                                "amazon": "287",
+                                "cdiscount": "110",
+                                "rueducommerce": "4",
+                                "priceminister": "1"
+                            },
+                            "count_by_status": {
+                                "cancel": "4",
+                                "new": "0",
+                                "shipped": "414",
+                                "processing": "17"
+                            }
+                        },
+                        "orders": {
+                            "order": [{
+                                "marketplace": "amazon",
+                                "idFlux": "99128",
+                                "order_status": {
+                                    "marketplace": "accept",
+                                    "lengow": "processing"
+                                },
+                                "order_id": "999-2121515-6705141",
+                                "order_mrid": "999-2121515-6705141",
+                                "order_refid": "999-2121515-6705141",
+                                "order_external_id": "99341",
+                                "order_purchase_date": "2016-10-01",
+                                "order_purchase_heure": "04:51:24",
+                                "order_amount": "105.85",
+                                "order_tax": "0.00",
+                                "order_shipping": "5.9",
+                                "order_commission": "0.0",
+                                "order_processing_fee": "0",
+                                "order_currency": "EUR",
+                                "order_payment": {
+                                    "payment_checkout": "",
+                                    "payment_status": "",
+                                    "payment_type": "",
+                                    "payment_date": "2016-10-01",
+                                    "payment_heure": "04:51:24"
+                                },
+                                "order_invoice": {
+                                    "invoice_number": "",
+                                    "invoice_url": ""
+                                },
+                                "billing_address": {
+                                    "billing_society": "",
+                                    "billing_civility": "",
+                                    "billing_lastname": "Lengow",
+                                    "billing_firstname": "",
+                                    "billing_email": "Lengow@marketplace."
+                                                     "amazon.de",
+                                    "billing_address": "Lengow",
+                                    "billing_address_2": "",
+                                    "billing_address_complement": "Lengow",
+                                    "billing_zipcode": "44000",
+                                    "billing_city": "Nantes",
+                                    "billing_country": "FR",
+                                    "billing_country_iso": "FR",
+                                    "billing_phone_home": "099999689492",
+                                    "billing_phone_office": "",
+                                    "billing_phone_mobile": "",
+                                    "billing_full_address": "Lengow"
+                                },
+                                "delivery_address": {
+                                    "delivery_society": "",
+                                    "delivery_civility": "",
+                                    "delivery_lastname": "Lengow",
+                                    "delivery_firstname": "",
+                                    "delivery_email": "",
+                                    "delivery_address": "Lengow",
+                                    "delivery_address_2": "",
+                                    "delivery_address_complement": "Lengow",
+                                    "delivery_zipcode": "44000",
+                                    "delivery_city": "Nantes",
+                                    "delivery_country": "FR",
+                                    "delivery_country_iso": "FR",
+                                    "delivery_phone_home": "099999689492",
+                                    "delivery_phone_office": "",
+                                    "delivery_phone_mobile": "",
+                                    "delivery_full_address": "Lengow"
+                                },
+                                "tracking_informations": {
+                                    "tracking_method": "",
+                                    "tracking_carrier": "Standard",
+                                    "tracking_number": "",
+                                    "tracking_url": "",
+                                    "tracking_shipped_date": "2016-10-01"
+                                                             " 09:32:16",
+                                    "tracking_relay": "",
+                                    "tracking_deliveringByMarketPlace": "0",
+                                    "tracking_parcel_weight": ""
+                                },
+                                "order_comments": "",
+                                "customer_id": "",
+                                "order_ip": "",
+                                "order_items": "1",
+                                "cart": {
                                     "nb_orders": "1",
-                                    "produits": {
-                                        "produit": {
-                                            "id": "0000_33544",
-                                            "titre": "Pantalon G-star rovic"
+                                    "products": {
+                                        "product": {
+                                            "idLengow": "9999_33544",
+                                            "idMP": "9999_33544",
+                                            "sku": {
+                                                 "-field": "ID_PRODUCT",
+                                                 "#text": "9999_33544"
+                                            },
+                                            "title": "Pantalon G-star rovic"
                                                      " slim, micro stretch "
-                                                     "twill GS Dk Fig Taille"
-                                                     " W29/L32",
+                                                     "twill GS Dk Fig Taille "
+                                                     "W29/L32",
                                             "category": "Accueil > HOMME > "
                                                         "JEANS/PANTALONS > "
                                                         "PANTALONS",
-                                            "url_produit": "http://www.Lengow."
-                                                           "com/product.php?id"
-                                                           "\\_product=11199",
-                                            "url_image": "http://www.lengow."
-                                                         "com/img/p/11199-421"
-                                                         "04-large.jpg",
-                                            "sku": "111111_33544",
-                                            "qt": "1",
-                                            "prix": "99.95",
-                                            "prix_unitaire": "99.95"}}}},
-                                         {
-                                "marketplace": "Rueducommerce",
-                                "idFlux": "99927",
-                                "status": "shipped",
-                                "com_id": "99924234",
-                                "com_mrid": "MOR-DD135M2569999",
-                                "com_refid": "999999244",
-                                "com_external_id": "99987",
-                                "com_payement_date": "2016-10-02",
-                                "com_payement_heure": "09:54:03",
-                                "com_purchase_date": "2016-10-02",
-                                "com_purchase_heure": "09:54:03",
-                                "com_fact_civilite": "M",
-                                "com_fact_nom": "Lengow",
-                                "com_fact_prenom": "Fabien",
-                                "com_fact_email": "Lengow@sc.rueducommerce."
-                                                  "com",
-                                "com_fact_adresse": "2 rue la vermeillade",
-                                "com_fact_cp": "44000",
-                                "com_fact_ville": "Nantes",
-                                "com_fact_pays": "France",
-                                "com_fact_pays_iso": "FR",
-                                "com_fact_telephone_home": "09999978878",
-                                "com_fact_full": "Lengow 44000 Nantes ",
-                                "liv_fact_nom": "Lengow",
-                                "liv_fact_civilite": "M",
-                                "liv_fact_prenom": "Lengow",
-                                "liv_fact_email": "Lengow@sc.rueducommerce."
-                                                  "com",
-                                "liv_fact_adresse": "Lengow 44000 Nantes",
-                                "liv_fact_adresse_complement": " mobile: "
-                                                               "09999933185",
-                                "liv_fact_cp": "44000",
-                                "liv_fact_ville": "Nantes",
-                                "liv_fact_pays": "France",
-                                "liv_fact_pays_iso": "FR",
-                                "liv_fact_telephone_home": "099999169",
-                                "liv_fact_full": "Lengow 44000 Nantes  mobile:"
-                                                 " 0999933185 France",
-                                "com_montant_commande": "98.99",
-                                "com_nb_article": "1",
-                                "com_shipping": "0.0",
-                                "com_commission": "0.0",
-                                "com_frais_traitement": "0",
-                                "com_type_livraison": "Colissimo",
-                                "com_currency": "EUR",
-                                "com_deliveringByMarketPlace": "0",
-                                "panier": {
-                                    "nb_orders": "1",
-                                    "produits": {
-                                        "produit": {
-                                            "id": "9999_27951",
-                                            "titre": "Pantalon Treillis Japan"
-                                                     " Rags Mirador gris "
-                                                     "Couleur Gris Taille 33",
-                                            "category": "Accueil > HOMME > "
-                                                        "JEANS/PANTALONS > "
-                                                        "PANTALONS",
-                                            "url_produit": "http://www.lengow."
-                                                           "com/product.php?id"
-                                                           "\\_product=99996",
-                                            "url_image": "http://www.lengow."
-                                                         "com/img/p/9999-52267"
-                                                         "-large.jpg",
-                                            "sku": "9999\\_279991",
-                                            "qt": "1",
-                                            "marque": "Japan Rags",
-                                            "prix": "98.99",
-                                            "prix_unitaire": "98.99"}
+                                            "url_product": "http://lengow.com"
+                                                           "/product.php?id\\"
+                                                           "_product=11199",
+                                            "url_image": "http://lengow.com/"
+                                                         "img/p/11199-42104-"
+                                                         "large.jpg",
+                                            "quantity": "1",
+                                            "price": "99.95",
+                                            "price_unit": "99.95"
+                                        }
                                     }
                                 }
                             }]
