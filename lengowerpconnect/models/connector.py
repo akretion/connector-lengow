@@ -31,8 +31,3 @@ class LengowBinding(models.AbstractModel):
         ondelete='restrict',
     )
     lengow_id = fields.Char(string='ID on Lengow')
-
-    _sql_constraints = [
-        ('lengow_uniq', 'unique(backend_id, lengow_id)',
-         'A binding already exists with the same Lengow ID.'),
-    ]
