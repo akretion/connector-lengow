@@ -17,6 +17,7 @@ class LengowModelBinder(LengowBinder):
     _model_name = [
         'lengow.market.place',
         'lengow.sale.order',
+        'lengow.sale.order.line',
         'lengow.res.partner',
     ]
 

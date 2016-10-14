@@ -9,7 +9,7 @@ from openerp.osv.expression import TRUE_LEAF
 
 from ..models.connector import get_environment
 from ..models.sale import SaleOrderBatchImporter
-from ..models.import_synchronizer import import_record 
+from ..models.import_synchronizer import import_record
 
 
 class TestImportSaleOrders20(common.SetUpLengowBase20):
@@ -59,7 +59,7 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                        "order_external_id": "99341",
                        "order_purchase_date": "2016-10-01",
                        "order_purchase_heure": "04:51:24",
-                       "order_amount": "105.85",
+                       "order_amount": "205.80",
                        "order_tax": "0.00",
                        "order_shipping": "5.9",
                        "order_commission": "0.0",
@@ -131,7 +131,7 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                        "cart": {
                            "nb_orders": "1",
                            "products": {
-                               "product": {
+                               "product": [{
                                    "idLengow": "9999_33544",
                                    "idMP": "9999_33544",
                                    "sku": {
@@ -154,26 +154,51 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                                    "quantity": "1",
                                    "price": "99.95",
                                    "price_unit": "99.95"
-                               }
-                           }
-                       }
-                    })
+                               }, {
+                                   "idLengow": "9999_33543",
+                                   "idMP": "9999_33543",
+                                   "sku": {
+                                       "-field": "ID_PRODUCT",
+                                       "#text": "9999_33543"
+                                   },
+                                   "title": "Pantalon G-star rovic"
+                                            " slim, micro stretch "
+                                            "twill GS Dk Fig Taille "
+                                            "W30/L33",
+                                   "category": "Accueil > HOMME > "
+                                               "JEANS/PANTALONS > "
+                                               "PANTALONS",
+                                   "url_product": "http://lengow.com"
+                                                  "/product.php?id\\"
+                                                  "_product=11198",
+                                   "url_image": "http://lengow.com/"
+                                                "img/p/11199-42102-"
+                                                "large.jpg",
+                                   "quantity": "1",
+                                   "price": "99.95",
+                                   "price_unit": "99.95"}]}}})
+
         order = self.env['lengow.sale.order'].search([('client_order_ref',
                                                        '=',
                                                        '999-2121515-6705141')])
         self.assertEqual(len(order), 1)
 
-        #check partner linked
+        # check partner linked
         self.assertEqual(order.partner_id.name, 'Lengow')
         self.assertEqual(order.partner_id.id, order.partner_shipping_id.id)
-
-        self.assertEqual(order.lengow_total_amount, 105.85)
 
         # order should not be assigned to a vendor
         self.assertFalse(order.user_id)
 
-        #order should be linked to the right marketplace
+        # order should be linked to the right marketplace
         self.assertEqual(order.marketplace_id.id, self.marketplace.id)
 
-        #order should be assigned to analytic for Amazon
+        # order should be assigned to analytic for Amazon
         self.assertEqual(order.project_id.id, self.amazon_analytic.id)
+
+        # order should have 2 order lines and one shipping cost line
+        self.assertEqual(len(order.order_line), 3)
+
+        # check amount total
+        self.assertEqual(order.lengow_total_amount, 205.80)
+        self.assertEqual(order.lengow_total_amount, order.amount_total)

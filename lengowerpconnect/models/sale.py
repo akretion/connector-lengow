@@ -3,11 +3,12 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import logging
 
-from openerp import fields, models
+from openerp import api, fields, models
 import openerp.addons.decimal_precision as dp
 from openerp.addons.connector.unit.mapper import mapping
+from openerp.addons.connector_ecommerce.sale import ShippingLineBuilder
 
-from .backend import lengow20
+from .backend import lengow, lengow20
 from .adapter import GenericAdapter20
 from .import_synchronizer import DelayedBatchImporter
 from .import_synchronizer import LengowImporter
@@ -117,6 +118,21 @@ class SaleOrderMapper(LengowImportMapper):
               ('order_amount', 'lengow_total_amount'),
               ('order_tax', 'lengow_total_amount_tax')]
 
+    children = [('cart', 'lengow_order_line_ids', 'lengow.sale.order.line'),
+                ]
+
+    def _add_shipping_line(self, map_record, values):
+        record = map_record.source
+        ship_amount = float(record.get('order_shipping') or 0.0)
+        if not ship_amount:
+            return values
+        line_builder = self.unit_for(LengowShippingLineBuilder)
+        line_builder.price_unit = ship_amount
+
+        line = (0, 0, line_builder.get_line())
+        values['order_line'].append(line)
+        return values
+
     def _get_partner_id(self, partner_data):
         binding_model = 'lengow.res.partner'
         importer = self.unit_for(LengowImporter, model=binding_model)
@@ -163,12 +179,25 @@ class SaleOrderMapper(LengowImportMapper):
         warehouse = self.options.marketplace.warehouse_id
         return {'warehouse_id': warehouse.id or False}
 
+    def finalize(self, map_record, values):
+        values.setdefault('order_line', [])
+        values = self._add_shipping_line(map_record, values)
+        return values
+
 
 @lengow20
 class LengowSaleOrderImporter(LengowImporter):
     _model_name = 'lengow.sale.order'
 
     _base_mapper = SaleOrderMapper
+
+    def _map_child(self, map_record, from_attr, to_attr, model_name):
+        """ Convert items of the record as defined by children """
+        child_records = map_record.source[from_attr]['prods']
+        mapper_child = self._get_map_child_unit(model_name)
+        items = mapper_child.get_items(child_records, map_record,
+                                       to_attr, options=self.options)
+        return items
 
     def _import_dependencies(self):
         record = self.lengow_record
@@ -195,7 +224,13 @@ class LengowSaleOrderImporter(LengowImporter):
         return super(LengowSaleOrderImporter, self)._create_data(
             map_record,
             marketplace=marketplace,
+            lengow_order_id=self.lengow_id,
             **kwargs)
+
+    def run(self, lengow_id, lengow_data):
+        # simply message structure for child mapping
+        lengow_data['cart'] = lengow_data['cart']['products']['product']
+        super(LengowSaleOrderImporter, self).run(lengow_id, lengow_data)
 
 
 class LengowSaleOrderLine(models.Model):
@@ -214,3 +249,29 @@ class LengowSaleOrderLine(models.Model):
                                       ondelete='cascade',
                                       select=True)
     lengow_orderline_id = fields.Char(string='Lengow Order Line ID')
+
+    @api.model
+    def create(self, vals):
+        lengow_order_id = vals['lengow_order_id']
+        binding = self.env['lengow.sale.order'].browse(lengow_order_id)
+        vals['order_id'] = binding.openerp_id.id
+        return super(LengowSaleOrderLine, self).create(vals)
+
+
+@lengow20
+class LengowSaleOrderLineMapper(LengowImportMapper):
+    _model_name = 'lengow.sale.order.line'
+
+    direct = [('title', 'name'),
+              ('quantity', 'product_uom_qty'),
+              ('quantity', 'product_uos_qty'),
+              ('price_unit', 'price_unit')]
+
+    @mapping
+    def lengow_order_id(self, record):
+        return {'lengow_order_id': self.options.lengow_order_id}
+
+
+@lengow
+class LengowShippingLineBuilder(ShippingLineBuilder):
+    _model_name = 'lengow.sale.order'

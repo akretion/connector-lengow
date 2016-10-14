@@ -186,7 +186,7 @@ class SetUpLengowBase20(SetUpLengowBase):
                                 "cart": {
                                     "nb_orders": "1",
                                     "products": {
-                                        "product": {
+                                        "product": [{
                                             "idLengow": "9999_33544",
                                             "idMP": "9999_33544",
                                             "sku": {
@@ -208,8 +208,31 @@ class SetUpLengowBase20(SetUpLengowBase):
                                                          "large.jpg",
                                             "quantity": "1",
                                             "price": "99.95",
+                                            "price_unit": "99.95"},
+                                            {
+                                            "idLengow": "9999_33543",
+                                            "idMP": "9999_33543",
+                                            "sku": {
+                                                "-field": "ID_PRODUCT",
+                                                "#text": "9999_33543"
+                                            },
+                                            "title": "Pantalon G-star rovic"
+                                                     " slim, micro stretch "
+                                                     "twill GS Dk Fig Taille "
+                                                     "W30/L33",
+                                            "category": "Accueil > HOMME > "
+                                                        "JEANS/PANTALONS > "
+                                                        "PANTALONS",
+                                            "url_product": "http://lengow.com"
+                                                           "/product.php?id\\"
+                                                           "_product=11198",
+                                            "url_image": "http://lengow.com/"
+                                                         "img/p/11199-42108-"
+                                                         "large.jpg",
+                                            "quantity": "2",
+                                            "price": "99.95",
                                             "price_unit": "99.95"
-                                        }
+                                        }]
                                     }
                                 }
                             }]
