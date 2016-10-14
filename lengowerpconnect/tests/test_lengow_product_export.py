@@ -55,7 +55,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
         lineDict = linesByID['DVD']
         expectedDict = {
             'BRAND': '',
-            'CATEGORY': 'All / Saleable / Accessories',
+            'CATEGORY': 'All > Saleable > Accessories',
             'DESCRIPTION': 'A smart description',
             'EAN': '4004764782703',
             'ID_PRODUCT': 'DVD',
@@ -107,7 +107,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
         lineDict = linesByID['DVD']
         expectedDict = {
             'BRAND': '',
-            'CATEGORY': 'Tous / En vente / Accessoires',
+            'CATEGORY': 'Tous > En vente > Accessoires',
             'DESCRIPTION': 'Description de vente',
             'EAN': '4004764782703',
             'ID_PRODUCT': 'DVD',
@@ -163,7 +163,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
         lineDict = linesByID['DVD']
         expectedDict = {
             'BRAND': '',
-            'CATEGORY': 'All / Saleable / Accessories',
+            'CATEGORY': 'All > Saleable > Accessories',
             'DESCRIPTION': 'A smart description',
             'EAN': '4004764782703',
             'ID_PRODUCT': 'DVD',
