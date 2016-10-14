@@ -171,3 +171,9 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
         # order should not be assigned to a vendor
         self.assertFalse(order.user_id)
+
+        #order should be linked to the right marketplace
+        self.assertEqual(order.marketplace_id.id, self.marketplace.id)
+
+        #order should be assigned to analytic for Amazon
+        self.assertEqual(order.project_id.id, self.amazon_analytic.id)

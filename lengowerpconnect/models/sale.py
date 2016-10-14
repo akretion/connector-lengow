@@ -113,7 +113,7 @@ class SaleOrderMapper(LengowImportMapper):
 
     direct = [('order_id', 'client_order_ref'),
               ('order_purchase_date', 'date_order'),
-              ('order_comments', 'note')
+              ('order_comments', 'note'),
               ('order_amount', 'lengow_total_amount'),
               ('order_tax', 'lengow_total_amount_tax')]
 
@@ -144,6 +144,25 @@ class SaleOrderMapper(LengowImportMapper):
     def user_id(self, record):
         return {'user_id': False}
 
+    @mapping
+    def markeplace_id(self, record):
+        return {'marketplace_id': self.options.marketplace.id or False}
+
+    @mapping
+    def project_id(self, record):
+        analytic_account = self.options.marketplace.account_analytic_id
+        return {'project_id': analytic_account.id or False}
+
+    @mapping
+    def fiscal_position_id(self, record):
+        fiscal_position = self.options.marketplace.fiscal_position_id
+        return {'fiscal_position_id': fiscal_position.id or False}
+
+    @mapping
+    def warehouse_id(self, record):
+        warehouse = self.options.marketplace.warehouse_id
+        return {'warehouse_id': warehouse.id or False}
+
 
 @lengow20
 class LengowSaleOrderImporter(LengowImporter):
@@ -161,6 +180,22 @@ class LengowSaleOrderImporter(LengowImporter):
         self._import_dependency(False,
                                 delivery_partner_data,
                                 'lengow.res.partner')
+
+    def _get_market_place(self, record):
+        marketplace_binder = self.binder_for('lengow.market.place')
+        marketplace = marketplace_binder.to_openerp(record['marketplace'],
+                                                    browse=True)
+        assert marketplace, (
+            "MarketPlace %s does not exists."
+            % record['marketplace'])
+        return marketplace
+
+    def _create_data(self, map_record, **kwargs):
+        marketplace = self._get_market_place(map_record.source)
+        return super(LengowSaleOrderImporter, self)._create_data(
+            map_record,
+            marketplace=marketplace,
+            **kwargs)
 
 
 class LengowSaleOrderLine(models.Model):

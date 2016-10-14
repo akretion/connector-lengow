@@ -46,6 +46,17 @@ class SetUpLengowBase20(SetUpLengowBase):
              'warehouse_id': self.warehouse.id}
         )
 
+        self.amazon_analytic = self.env['account.analytic.account'].create(
+            {'name': 'Amazon Sales',
+             'type': 'normal'})
+
+        self.marketplace = self.marketplace_model.create(
+            {'backend_id': self.backend.id,
+             'name': 'Amazon',
+             'lengow_id': 'amazon',
+             'specific_account_analytic_id': self.amazon_analytic.id
+             })
+
         self.catalogue = self.catalogue_model.create(
             {'name': 'Test Lengow Catalogue',
              'backend_id': self.backend.id,
