@@ -17,7 +17,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
     def setUp(self):
         super(TestImportSaleOrders20, self).setUp()
-
+        self.product1.write({'default_code': '9999_33543'})
+        self.product2.write({'default_code': '9999_33544'})
         bind_wizard = self.bind_wizard_model.create(
             {'catalogue_id': self.catalogue.id,
              'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
@@ -211,6 +212,10 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
         # order should be assigned to analytic for Amazon
         self.assertEqual(order.project_id.id, self.amazon_analytic.id)
+
+        # payment method should be the amazon one
+        self.assertEqual(order.payment_method_id.id,
+                         self.marketplace.payment_method_id.id)
 
         # order should have 2 order lines and one shipping cost line
         self.assertEqual(len(order.order_line), 3)

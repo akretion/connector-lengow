@@ -117,3 +117,23 @@ class TestBackendSynchronize(common.SetUpLengowBase30):
             self.backend.synchronize_metadata()
             self.assertFalse((all(place.homepage == fake_homepage
                                   for place in places)))
+
+
+class TestMarketPlacePaymentMethod(common.SetUpLengowBase20):
+    '''
+        At each market place creation, a payment method must be created
+        and linked.
+    '''
+
+    def setUp(self):
+        super(TestMarketPlacePaymentMethod, self).setUp()
+
+    def test_marketplace_payment_method(self):
+        self.assertTrue(self.marketplace.payment_method_id)
+
+        payment_method = self.env['payment.method'].search(
+            [('marketplace_id', '=', self.marketplace.id)])
+        self.assertEqual(len(payment_method), 1)
+        self.assertEqual(payment_method.name, self.marketplace.name)
+        self.assertEqual(payment_method.company_id.id,
+                         self.marketplace.backend_id.company_id.id)

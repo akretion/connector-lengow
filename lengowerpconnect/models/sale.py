@@ -179,6 +179,11 @@ class SaleOrderMapper(LengowImportMapper):
         warehouse = self.options.marketplace.warehouse_id
         return {'warehouse_id': warehouse.id or False}
 
+    @mapping
+    def payment_method_id(self, record):
+        return {'payment_method_id':
+                self.options.marketplace.payment_method_id.id or False}
+
     def finalize(self, map_record, values):
         values.setdefault('order_line', [])
         values = self._add_shipping_line(map_record, values)

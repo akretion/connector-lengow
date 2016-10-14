@@ -7,6 +7,7 @@ from . import binder
 from . import connector
 from . import import_synchronizer
 from . import lengow_model
+from . import payment_method
 from . import product
 from . import res_partner
 from . import sale

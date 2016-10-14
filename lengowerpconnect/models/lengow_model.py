@@ -267,6 +267,8 @@ class LengowMarketPlace(models.Model):
         string='warehouse',
         compute='_get_warehouse_id')
     backend_version = fields.Selection(related='backend_id.version')
+    payment_method_id = fields.Many2one(string='Payment Method',
+                                        comodel_name='payment.method')
 
     @api.multi
     def _get_account_analytic_id(self):
@@ -288,6 +290,17 @@ class LengowMarketPlace(models.Model):
             mp.warehouse_id = (
                 mp.specific_warehouse_id or
                 mp.backend_id.warehouse_id)
+
+    @api.model
+    def create(self, vals):
+        marketplace = super(LengowMarketPlace, self).create(vals)
+        # create a payment method for sales on this market place
+        payment_method = self.env['payment.method'].create({
+            'name': marketplace.name,
+            'marketplace_id': marketplace.id,
+            'company_id': marketplace.backend_id.company_id.id})
+        marketplace.write({'payment_method_id': payment_method.id})
+        return marketplace
 
 
 @lengow30
