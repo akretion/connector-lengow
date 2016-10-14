@@ -170,9 +170,9 @@ class SaleOrderMapper(LengowImportMapper):
         return {'project_id': analytic_account.id or False}
 
     @mapping
-    def fiscal_position_id(self, record):
+    def fiscal_position(self, record):
         fiscal_position = self.options.marketplace.fiscal_position_id
-        return {'fiscal_position_id': fiscal_position.id or False}
+        return {'fiscal_position': fiscal_position.id or False}
 
     @mapping
     def warehouse_id(self, record):
