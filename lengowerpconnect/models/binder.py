@@ -19,6 +19,7 @@ class LengowModelBinder(LengowBinder):
         'lengow.sale.order',
         'lengow.sale.order.line',
         'lengow.res.partner',
+        'lengow.product.product'
     ]
 
     def to_openerp(self, external_id, unwrap=False, browse=False):
@@ -38,7 +39,15 @@ class LengowModelBinder(LengowBinder):
         )
         if not bindings:
             return self.model.browse() if browse else None
-        assert len(bindings) == 1, "Several records found: %s" % (bindings,)
+
+        if len(bindings) > 1:
+            # can be the case for lengow.product.product because the same
+            # product can be binded to several catalogue
+            assert len(set([binding.openerp_id.id
+                            for binding in bindings])) == 1, (
+                "Multiple value for same id %s" % external_id)
+            bindings = bindings[0]
+
         if unwrap:
             return bindings.openerp_id if browse else bindings.openerp_id.id
         else:

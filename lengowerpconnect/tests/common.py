@@ -38,6 +38,7 @@ class SetUpLengowBase20(SetUpLengowBase):
 
     def setUp(self):
         super(SetUpLengowBase20, self).setUp()
+
         self.backend = self.backend_model.create(
             {'name': 'Test Lengow',
              'version': '2.0',
@@ -63,6 +64,7 @@ class SetUpLengowBase20(SetUpLengowBase):
              'product_ftp': False,
              'product_filename': 'products.csv',
              'warehouse_id': self.warehouse.id})
+
         self.json_data = {
             'orders': {
                 'status_code': 200,
@@ -239,6 +241,10 @@ class SetUpLengowBase20(SetUpLengowBase):
                         }
                     }
                 }}}
+        self.product1 = self.env.ref('product.product_product_35')
+        self.product2 = self.env.ref('product.product_product_36')
+        self.product1.write({'default_code': '9999_33543'})
+        self.product2.write({'default_code': '9999_33544'})
 
 
 class SetUpLengowBase30(SetUpLengowBase):

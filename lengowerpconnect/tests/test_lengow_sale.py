@@ -18,6 +18,22 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
     def setUp(self):
         super(TestImportSaleOrders20, self).setUp()
 
+        bind_wizard = self.bind_wizard_model.create(
+            {'catalogue_id': self.catalogue.id,
+             'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
+        bind_wizard.bind_products()
+
+        catalogue = self.catalogue_model.create(
+            {'name': 'Test Lengow Catalogue 2',
+             'backend_id': self.backend.id,
+             'product_ftp': False,
+             'product_filename': 'products2.csv',
+             'warehouse_id': self.warehouse.id})
+        bind_wizard = self.bind_wizard_model.create(
+            {'catalogue_id': catalogue.id,
+             'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
+        bind_wizard.bind_products()
+
     def test_import_sale_orders(self):
         with mock.patch(self.get_method) as mock_get:
             # mock get request for orders data
@@ -59,7 +75,7 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                        "order_external_id": "99341",
                        "order_purchase_date": "2016-10-01",
                        "order_purchase_heure": "04:51:24",
-                       "order_amount": "205.80",
+                       "order_amount": "305.65",
                        "order_tax": "0.00",
                        "order_shipping": "5.9",
                        "order_commission": "0.0",
@@ -132,11 +148,11 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                            "nb_orders": "1",
                            "products": {
                                "product": [{
-                                   "idLengow": "9999_33544",
-                                   "idMP": "9999_33544",
+                                   "idLengow": "9999_33543",
+                                   "idMP": "9999_33543",
                                    "sku": {
                                         "-field": "ID_PRODUCT",
-                                        "#text": "9999_33544"
+                                        "#text": "9999_33543"
                                    },
                                    "title": "Pantalon G-star rovic"
                                             " slim, micro stretch "
@@ -151,15 +167,15 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                                    "url_image": "http://lengow.com/"
                                                 "img/p/11199-42104-"
                                                 "large.jpg",
-                                   "quantity": "1",
-                                   "price": "99.95",
-                                   "price_unit": "99.95"
+                                   "quantity": "2",
+                                   "price": "199.8",
+                                   "price_unit": "99.90"
                                }, {
-                                   "idLengow": "9999_33543",
-                                   "idMP": "9999_33543",
+                                   "idLengow": "9999_33544",
+                                   "idMP": "9999_33544",
                                    "sku": {
                                        "-field": "ID_PRODUCT",
-                                       "#text": "9999_33543"
+                                       "#text": "9999_33544"
                                    },
                                    "title": "Pantalon G-star rovic"
                                             " slim, micro stretch "
@@ -200,5 +216,33 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(len(order.order_line), 3)
 
         # check amount total
-        self.assertEqual(order.lengow_total_amount, 205.80)
-        self.assertEqual(order.lengow_total_amount, order.amount_total)
+        self.assertEqual(order.lengow_total_amount, 305.65)
+        self.assertAlmostEqual(order.lengow_total_amount, order.amount_total)
+
+        # check order lines
+        order_line = order.order_line[0]
+        self.assertEqual(order_line.product_id.id, self.product1.id)
+        self.assertEqual(order_line.name, "Pantalon G-star rovic"
+                                          " slim, micro stretch "
+                                          "twill GS Dk Fig Taille W29/L32")
+        self.assertEqual(order_line.product_uom_qty, 2)
+        self.assertEqual(order_line.price_unit, 99.90)
+        self.assertEqual(order_line.price_subtotal, 199.8)
+
+        order_line = order.order_line[1]
+        self.assertEqual(order_line.product_id.id, self.product2.id)
+        self.assertEqual(order_line.name, "Pantalon G-star rovic"
+                                          " slim, micro stretch "
+                                          "twill GS Dk Fig Taille W30/L33")
+        self.assertEqual(order_line.product_uom_qty, 1)
+        self.assertEqual(order_line.price_unit, 99.95)
+        self.assertEqual(order_line.price_subtotal, 99.95)
+
+        order_line = order.order_line[2]
+        self.assertEqual(order_line.product_id.id,
+                         self.env.ref('connector_ecommerce.'
+                                      'product_product_shipping').id)
+        self.assertEqual(order_line.name, "Shipping costs")
+        self.assertEqual(order_line.product_uom_qty, 1)
+        self.assertEqual(order_line.price_unit, 5.9)
+        self.assertEqual(order_line.price_subtotal, 5.9)

@@ -271,6 +271,14 @@ class LengowSaleOrderLineMapper(LengowImportMapper):
     def lengow_order_id(self, record):
         return {'lengow_order_id': self.options.lengow_order_id}
 
+    @mapping
+    def product_id(self, record):
+        binder = self.binder_for('lengow.product.product')
+        product_id = binder.to_openerp(record['sku']['#text'], unwrap=True)
+        assert product_id is not None, (
+            "product_id %s is not binded to a Lengow catalogue")
+        return {'product_id': product_id}
+
 
 @lengow
 class LengowShippingLineBuilder(ShippingLineBuilder):
