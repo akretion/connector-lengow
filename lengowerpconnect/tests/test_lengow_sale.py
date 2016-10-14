@@ -23,17 +23,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
             {'catalogue_id': self.catalogue.id,
              'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
         bind_wizard.bind_products()
-
-        catalogue = self.catalogue_model.create(
-            {'name': 'Test Lengow Catalogue 2',
-             'backend_id': self.backend.id,
-             'product_ftp': False,
-             'product_filename': 'products2.csv',
-             'warehouse_id': self.warehouse.id})
-        bind_wizard = self.bind_wizard_model.create(
-            {'catalogue_id': catalogue.id,
-             'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
-        bind_wizard.bind_products()
+        self.marketplace.payment_method_id.write({
+            'journal_id': self.env.ref('account.bank_journal').id})
 
     def test_import_sale_orders(self):
         with mock.patch(self.get_method) as mock_get:
@@ -251,3 +242,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(order_line.product_uom_qty, 1)
         self.assertEqual(order_line.price_unit, 5.9)
         self.assertEqual(order_line.price_subtotal, 5.9)
+
+        # check payment linked to sale
+        self.assertTrue(order.payment_ids)
+        self.assertEqual(order.residual, 0)
+        self.assertAlmostEqual(order.amount_paid, order.amount_total)

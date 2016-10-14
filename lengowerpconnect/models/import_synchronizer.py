@@ -86,6 +86,14 @@ class LengowImporter(Importer):
         hash_object = hashlib.sha1(hashtring.encode())
         return hash_object.hexdigest()
 
+    def _before_import(self):
+        """ Hook called before the import, when we have the Magento
+        data"""
+
+    def _after_import(self, binding):
+        """ Hook called at the end of the import """
+        return
+
     def run(self, lengow_id, lengow_data):
         """ Run the synchronization
 
@@ -100,6 +108,7 @@ class LengowImporter(Importer):
 
         binding = self._get_binding()
 
+        self._before_import()
         self._import_dependencies()
 
         map_record = self._map_data()
@@ -112,6 +121,7 @@ class LengowImporter(Importer):
             binding = self._create(record)
 
         self.binder.bind(self.lengow_id, binding)
+        self._after_import(binding)
 
 
 class BatchImporter(Importer):

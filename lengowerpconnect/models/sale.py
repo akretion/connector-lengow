@@ -196,6 +196,15 @@ class LengowSaleOrderImporter(LengowImporter):
 
     _base_mapper = SaleOrderMapper
 
+    def _create_payment(self, binding):
+        assert binding.payment_method_id.journal_id, (
+            'No payment journal defined on payment method %s' %
+            binding.payment_method_id.name)
+        amount = self.lengow_record.get('order_amount')
+        if amount:
+            amount = float(amount)
+            binding.openerp_id.automatic_payment(amount)
+
     def _map_child(self, map_record, from_attr, to_attr, model_name):
         """ Convert items of the record as defined by children """
         child_records = map_record.source[from_attr]['prods']
@@ -231,6 +240,9 @@ class LengowSaleOrderImporter(LengowImporter):
             marketplace=marketplace,
             lengow_order_id=self.lengow_id,
             **kwargs)
+
+    def _after_import(self, binding):
+        self._create_payment(binding)
 
     def run(self, lengow_id, lengow_data):
         # simply message structure for child mapping
