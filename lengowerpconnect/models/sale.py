@@ -149,7 +149,11 @@ class SaleOrderBatchImporter(DelayedBatchImporter):
         _logger.info('Search for lengow sale orders %s returned %s',
                      filters, order_ids)
         for order_data in orders_data:
-            self._import_record(order_data['order_id'], order_data)
+            order_count = self.env['lengow.sale.order'].search_count(
+                [('backend_id', '=', self.backend_record.id),
+                 ('lengow_id', '=', order_data['order_id'])])
+            if order_count == 0:
+                self._import_record(order_data['order_id'], order_data)
 
 
 @lengow20
@@ -300,12 +304,8 @@ class LengowSaleOrderImporter(LengowImporter):
             **kwargs)
 
     def _update_data(self, map_record, **kwargs):
-        marketplace = self._get_market_place(map_record.source)
-        return super(LengowSaleOrderImporter, self)._update_data(
-            map_record,
-            marketplace=marketplace,
-            lengow_order_id=self.lengow_id,
-            **kwargs)
+        # sale order update is not managed
+        return
 
     def _after_import(self, binding):
         self._create_payment(binding)
