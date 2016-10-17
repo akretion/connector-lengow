@@ -228,6 +228,15 @@ class SaleOrderMapper(LengowImportMapper):
         return {'payment_method_id':
                 self.options.marketplace.payment_method_id.id or False}
 
+    @mapping
+    def name(self, record):
+        if self.options.marketplace.sale_prefix_code:
+            name = '%s-%s' % (self.options.marketplace.sale_prefix_code,
+                              record['order_id'])
+        else:
+            name = record['order_id']
+        return {'name': name}
+
     def finalize(self, map_record, values):
         values.setdefault('order_line', [])
         values = self._add_shipping_line(map_record, values)

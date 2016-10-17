@@ -192,6 +192,7 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(len(order), 1)
 
         self.assertTrue(order.is_from_lengow)
+        self.assertEqual(order.name, 'AMAZON-999-2121515-6705141')
 
         # check partner linked
         self.assertEqual(order.partner_id.name, 'Lengow')

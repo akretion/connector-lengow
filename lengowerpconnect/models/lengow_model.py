@@ -269,6 +269,7 @@ class LengowMarketPlace(models.Model):
     backend_version = fields.Selection(related='backend_id.version')
     payment_method_id = fields.Many2one(string='Payment Method',
                                         comodel_name='payment.method')
+    sale_prefix_code = fields.Char(string='Prefix for Order Reference')
 
     @api.multi
     def _get_account_analytic_id(self):

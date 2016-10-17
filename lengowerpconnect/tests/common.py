@@ -55,7 +55,8 @@ class SetUpLengowBase20(SetUpLengowBase):
             {'backend_id': self.backend.id,
              'name': 'Amazon',
              'lengow_id': 'amazon',
-             'specific_account_analytic_id': self.amazon_analytic.id
+             'specific_account_analytic_id': self.amazon_analytic.id,
+             'sale_prefix_code': 'AMAZON'
              })
 
         self.catalogue = self.catalogue_model.create(
