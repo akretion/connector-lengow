@@ -184,7 +184,31 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                                                 "large.jpg",
                                    "quantity": "1",
                                    "price": "99.95",
-                                   "price_unit": "99.95"}]}}})
+                                   "price_unit": "99.95"
+                               }, {
+                                   "idLengow": "9999_33544",
+                                   "idMP": "9999_33544",
+                                   "sku": {
+                                       "-field": "ID_PRODUCT",
+                                       "#text": "9999_33544"
+                                   },
+                                   "title": "Pantalon G-star rovic"
+                                            " slim, micro stretch "
+                                            "twill GS Dk Fig Taille "
+                                            "W30/L33",
+                                   "category": "Accueil > HOMME > "
+                                               "JEANS/PANTALONS > "
+                                               "PANTALONS",
+                                   "url_product": "http://lengow.com"
+                                                  "/product.php?id\\"
+                                                  "_product=11198",
+                                   "url_image": "http://lengow.com/"
+                                                "img/p/11199-42102-"
+                                                "large.jpg",
+                                   "quantity": "1",
+                                   "price": "99.95",
+                                   "price_unit": "99.95",
+                                   "status": 'cancel'}]}}})
 
         order = self.env['sale.order'].search([('client_order_ref',
                                                 '=',

@@ -259,14 +259,6 @@ class LengowSaleOrderImporter(LengowImporter):
             amount = float(amount)
             binding.openerp_id.automatic_payment(amount)
 
-    def _map_child(self, map_record, from_attr, to_attr, model_name):
-        """ Convert items of the record as defined by children """
-        child_records = map_record.source[from_attr]['prods']
-        mapper_child = self._get_map_child_unit(model_name)
-        items = mapper_child.get_items(child_records, map_record,
-                                       to_attr, options=self.options)
-        return items
-
     def _import_dependencies(self):
         record = self.lengow_record
         billing_partner_data = record['billing_address']
@@ -306,9 +298,18 @@ class LengowSaleOrderImporter(LengowImporter):
     def _after_import(self, binding):
         self._create_payment(binding)
 
+    def _order_line_preprocess(self, lengow_data):
+        # simplify message structure for child mapping and remove refused
+        # or cancelled lines
+        lines = []
+        for line in lengow_data['cart']['products']['product']:
+            if not line.get('status', False) in ('cancel', 'refused'):
+                lines.append(line)
+        lengow_data['cart'] = lines
+        return lengow_data
+
     def run(self, lengow_id, lengow_data):
-        # simply message structure for child mapping
-        lengow_data['cart'] = lengow_data['cart']['products']['product']
+        lengow_data = self._order_line_preprocess(lengow_data)
         super(LengowSaleOrderImporter, self).run(lengow_id, lengow_data)
 
 

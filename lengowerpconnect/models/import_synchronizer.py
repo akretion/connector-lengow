@@ -87,7 +87,7 @@ class LengowImporter(Importer):
         return hash_object.hexdigest()
 
     def _before_import(self):
-        """ Hook called before the import, when we have the Magento
+        """ Hook called before the import, when we have the Lengow
         data"""
 
     def _after_import(self, binding):
