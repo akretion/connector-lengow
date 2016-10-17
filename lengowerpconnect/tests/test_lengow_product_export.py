@@ -16,17 +16,6 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
 
     def setUp(self):
         super(TestLengowProductBinding, self).setUp()
-        self.product = self.env.ref('product.product_product_36')
-        self.product.write({'ean13': '4004764782703',
-                            'description_sale': 'A smart description',
-                            'list_price': 40.59,
-                            'product_url': 'url_product',
-                            'image_url': 'url_image'})
-        bind_wizard = self.bind_wizard_model.create(
-            {'catalogue_id': self.catalogue.id,
-             'product_ids': [(6, 0, [self.product.id])]})
-
-        bind_wizard.bind_products()
 
     def test_export_products(self):
         """
@@ -50,15 +39,15 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
         for line in reader:
             linesByID[line['ID_PRODUCT']] = line
 
-        self.assertEqual(1, len(linesByID))
+        self.assertEqual(2, len(linesByID))
 
-        lineDict = linesByID['DVD']
+        lineDict = linesByID['9999_33544']
         expectedDict = {
             'BRAND': '',
             'CATEGORY': 'All > Saleable > Accessories',
             'DESCRIPTION': 'A smart description',
             'EAN': '4004764782703',
-            'ID_PRODUCT': 'DVD',
+            'ID_PRODUCT': '9999_33544',
             'NAME_PRODUCT': 'Blank DVD-RW',
             'PRICE_PRODUCT': '40.59',
             'QUANTITY': '-3.0',
@@ -77,7 +66,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
              })
         wiz_lang.lang_install()
 
-        self.product.with_context(lang="fr_FR").write(
+        self.product2.with_context(lang="fr_FR").write(
             {'name': 'DVD-RW vierge',
              'description_sale': 'Description de vente'})
 
@@ -102,15 +91,15 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
         for line in reader:
             linesByID[line['ID_PRODUCT']] = line
 
-        self.assertEqual(1, len(linesByID))
+        self.assertEqual(2, len(linesByID))
 
-        lineDict = linesByID['DVD']
+        lineDict = linesByID['9999_33544']
         expectedDict = {
             'BRAND': '',
             'CATEGORY': 'Tous > En vente > Accessoires',
             'DESCRIPTION': 'Description de vente',
             'EAN': '4004764782703',
-            'ID_PRODUCT': 'DVD',
+            'ID_PRODUCT': '9999_33544',
             'NAME_PRODUCT': 'DVD-RW vierge',
             'PRICE_PRODUCT': '40.59',
             'QUANTITY': '-3.0',
@@ -136,7 +125,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'name': 'Test Item',
             'price_version_id': version.id,
             'base': 1,
-            'product_id': self.product.id,
+            'product_id': self.product2.id,
             'price_discount': -0.1,
         })
         self.catalogue.write({'product_pricelist_id': pricelist.id})
@@ -158,15 +147,15 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
         for line in reader:
             linesByID[line['ID_PRODUCT']] = line
 
-        self.assertEqual(1, len(linesByID))
+        self.assertEqual(2, len(linesByID))
 
-        lineDict = linesByID['DVD']
+        lineDict = linesByID['9999_33544']
         expectedDict = {
             'BRAND': '',
             'CATEGORY': 'All > Saleable > Accessories',
             'DESCRIPTION': 'A smart description',
             'EAN': '4004764782703',
-            'ID_PRODUCT': 'DVD',
+            'ID_PRODUCT': '9999_33544',
             'NAME_PRODUCT': 'Blank DVD-RW',
             'PRICE_PRODUCT': '36.53',
             'QUANTITY': '-3.0',

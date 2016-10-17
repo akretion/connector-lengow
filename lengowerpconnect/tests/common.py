@@ -117,7 +117,7 @@ class SetUpLengowBase20(SetUpLengowBase):
                                 "order_external_id": "99341",
                                 "order_purchase_date": "2016-10-01",
                                 "order_purchase_heure": "04:51:24",
-                                "order_amount": "105.85",
+                                "order_amount": "305.65",
                                 "order_tax": "0.00",
                                 "order_shipping": "5.9",
                                 "order_commission": "0.0",
@@ -179,7 +179,7 @@ class SetUpLengowBase20(SetUpLengowBase):
                                     "tracking_shipped_date": "2016-10-01"
                                                              " 09:32:16",
                                     "tracking_relay": "",
-                                    "tracking_deliveringByMarketPlace": "0",
+                                    "tracking_deliveringByMarketPlace": "1",
                                     "tracking_parcel_weight": ""
                                 },
                                 "order_comments": "",
@@ -190,11 +190,11 @@ class SetUpLengowBase20(SetUpLengowBase):
                                     "nb_orders": "1",
                                     "products": {
                                         "product": [{
-                                            "idLengow": "9999_33544",
-                                            "idMP": "9999_33544",
+                                            "idLengow": "9999_33543",
+                                            "idMP": "9999_33543",
                                             "sku": {
                                                  "-field": "ID_PRODUCT",
-                                                 "#text": "9999_33544"
+                                                 "#text": "9999_33543"
                                             },
                                             "title": "Pantalon G-star rovic"
                                                      " slim, micro stretch "
@@ -209,15 +209,15 @@ class SetUpLengowBase20(SetUpLengowBase):
                                             "url_image": "http://lengow.com/"
                                                          "img/p/11199-42104-"
                                                          "large.jpg",
-                                            "quantity": "1",
-                                            "price": "99.95",
-                                            "price_unit": "99.95"},
-                                            {
-                                            "idLengow": "9999_33543",
-                                            "idMP": "9999_33543",
+                                            "quantity": "2",
+                                            "price": "199.8",
+                                            "price_unit": "99.90"
+                                        }, {
+                                            "idLengow": "9999_33544",
+                                            "idMP": "9999_33544",
                                             "sku": {
                                                 "-field": "ID_PRODUCT",
-                                                "#text": "9999_33543"
+                                                "#text": "9999_33544"
                                             },
                                             "title": "Pantalon G-star rovic"
                                                      " slim, micro stretch "
@@ -230,20 +230,53 @@ class SetUpLengowBase20(SetUpLengowBase):
                                                            "/product.php?id\\"
                                                            "_product=11198",
                                             "url_image": "http://lengow.com/"
-                                                         "img/p/11199-42108-"
+                                                         "img/p/11199-42102-"
                                                          "large.jpg",
-                                            "quantity": "2",
+                                            "quantity": "1",
                                             "price": "99.95",
                                             "price_unit": "99.95"
-                                        }]
-                                    }
-                                }
-                            }]
+                                        }, {
+                                            "idLengow": "9999_33544",
+                                            "idMP": "9999_33544",
+                                            "sku": {
+                                                "-field": "ID_PRODUCT",
+                                                "#text": "9999_33544"
+                                            },
+                                            "title": "Pantalon G-star rovic"
+                                                     " slim, micro stretch "
+                                                     "twill GS Dk Fig Taille "
+                                                     "W30/L33",
+                                            "category": "Accueil > HOMME > "
+                                                        "JEANS/PANTALONS > "
+                                                        "PANTALONS",
+                                            "url_product": "http://lengow.com"
+                                                           "/product.php?id\\"
+                                                           "_product=11198",
+                                            "url_image": "http://lengow.com/"
+                                                         "img/p/11199-42102-"
+                                                         "large.jpg",
+                                            "quantity": "1",
+                                            "price": "99.95",
+                                            "price_unit": "99.95",
+                                            "status": 'cancel'}]}}}]
                         }
                     }
                 }}}
         self.product1 = self.env.ref('product.product_product_35')
         self.product2 = self.env.ref('product.product_product_36')
+        self.product1.write({'default_code': '9999_33543'})
+        self.product2.write({'default_code': '9999_33544',
+                             'ean13': '4004764782703',
+                             'description_sale': 'A smart description',
+                             'list_price': 40.59,
+                             'product_url': 'url_product',
+                             'image_url': 'url_image'})
+        bind_wizard = self.bind_wizard_model.create(
+            {'catalogue_id': self.catalogue.id,
+             'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
+        bind_wizard.bind_products()
+        self.marketplace.payment_method_id.write({
+            'journal_id': self.env.ref('account.bank_journal').id})
 
 
 class SetUpLengowBase30(SetUpLengowBase):

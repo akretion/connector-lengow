@@ -17,14 +17,6 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
     def setUp(self):
         super(TestImportSaleOrders20, self).setUp()
-        self.product1.write({'default_code': '9999_33543'})
-        self.product2.write({'default_code': '9999_33544'})
-        bind_wizard = self.bind_wizard_model.create(
-            {'catalogue_id': self.catalogue.id,
-             'product_ids': [(6, 0, [self.product1.id, self.product2.id])]})
-        bind_wizard.bind_products()
-        self.marketplace.payment_method_id.write({
-            'journal_id': self.env.ref('account.bank_journal').id})
 
     def test_import_sale_orders(self):
         with mock.patch(self.get_method) as mock_get:
@@ -51,164 +43,12 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
     def test_import_sale_order(self):
         session = ConnectorSession.from_env(self.env)
+        order_message = self.json_data['orders']['json']
+        order_data = order_message['statistics']['orders']['order'][0]
         import_record(session,
                       'lengow.sale.order',
                       self.backend.id,
-                      '999-2121515-6705141',
-                      {"marketplace": "amazon",
-                       "idFlux": "99128",
-                       "order_status": {
-                           "marketplace": "accept",
-                           "lengow": "processing"
-                       },
-                       "order_id": "999-2121515-6705141",
-                       "order_mrid": "999-2121515-6705141",
-                       "order_refid": "999-2121515-6705141",
-                       "order_external_id": "99341",
-                       "order_purchase_date": "2016-10-01",
-                       "order_purchase_heure": "04:51:24",
-                       "order_amount": "305.65",
-                       "order_tax": "0.00",
-                       "order_shipping": "5.9",
-                       "order_commission": "0.0",
-                       "order_processing_fee": "0",
-                       "order_currency": "EUR",
-                       "order_payment": {
-                           "payment_checkout": "",
-                           "payment_status": "",
-                           "payment_type": "",
-                           "payment_date": "2016-10-01",
-                           "payment_heure": "04:51:24"
-                       },
-                       "order_invoice": {
-                           "invoice_number": "",
-                           "invoice_url": ""
-                       },
-                       "billing_address": {
-                           "billing_society": "",
-                           "billing_civility": "",
-                           "billing_lastname": "Lengow",
-                           "billing_firstname": "",
-                           "billing_email": "Lengow@marketplace."
-                                            "amazon.de",
-                           "billing_address": "Lengow",
-                           "billing_address_2": "",
-                           "billing_address_complement": "Lengow",
-                           "billing_zipcode": "44000",
-                           "billing_city": "Nantes",
-                           "billing_country": "FR",
-                           "billing_country_iso": "FR",
-                           "billing_phone_home": "099999689492",
-                           "billing_phone_office": "",
-                           "billing_phone_mobile": "",
-                           "billing_full_address": "Lengow"
-                       },
-                       "delivery_address": {
-                           "delivery_society": "",
-                           "delivery_civility": "",
-                           "delivery_lastname": "Lengow",
-                           "delivery_firstname": "",
-                           "delivery_email": "",
-                           "delivery_address": "Lengow",
-                           "delivery_address_2": "",
-                           "delivery_address_complement": "Lengow",
-                           "delivery_zipcode": "44000",
-                           "delivery_city": "Nantes",
-                           "delivery_country": "FR",
-                           "delivery_country_iso": "FR",
-                           "delivery_phone_home": "099999689492",
-                           "delivery_phone_office": "",
-                           "delivery_phone_mobile": "",
-                           "delivery_full_address": "Lengow"
-                       },
-                       "tracking_informations": {
-                           "tracking_method": "",
-                           "tracking_carrier": "Standard",
-                           "tracking_number": "",
-                           "tracking_url": "",
-                           "tracking_shipped_date": "2016-10-01"
-                                                    " 09:32:16",
-                           "tracking_relay": "",
-                           "tracking_deliveringByMarketPlace": "0",
-                           "tracking_parcel_weight": ""
-                       },
-                       "order_comments": "",
-                       "customer_id": "",
-                       "order_ip": "",
-                       "order_items": "1",
-                       "cart": {
-                           "nb_orders": "1",
-                           "products": {
-                               "product": [{
-                                   "idLengow": "9999_33543",
-                                   "idMP": "9999_33543",
-                                   "sku": {
-                                        "-field": "ID_PRODUCT",
-                                        "#text": "9999_33543"
-                                   },
-                                   "title": "Pantalon G-star rovic"
-                                            " slim, micro stretch "
-                                            "twill GS Dk Fig Taille "
-                                            "W29/L32",
-                                   "category": "Accueil > HOMME > "
-                                               "JEANS/PANTALONS > "
-                                               "PANTALONS",
-                                   "url_product": "http://lengow.com"
-                                                  "/product.php?id\\"
-                                                  "_product=11199",
-                                   "url_image": "http://lengow.com/"
-                                                "img/p/11199-42104-"
-                                                "large.jpg",
-                                   "quantity": "2",
-                                   "price": "199.8",
-                                   "price_unit": "99.90"
-                               }, {
-                                   "idLengow": "9999_33544",
-                                   "idMP": "9999_33544",
-                                   "sku": {
-                                       "-field": "ID_PRODUCT",
-                                       "#text": "9999_33544"
-                                   },
-                                   "title": "Pantalon G-star rovic"
-                                            " slim, micro stretch "
-                                            "twill GS Dk Fig Taille "
-                                            "W30/L33",
-                                   "category": "Accueil > HOMME > "
-                                               "JEANS/PANTALONS > "
-                                               "PANTALONS",
-                                   "url_product": "http://lengow.com"
-                                                  "/product.php?id\\"
-                                                  "_product=11198",
-                                   "url_image": "http://lengow.com/"
-                                                "img/p/11199-42102-"
-                                                "large.jpg",
-                                   "quantity": "1",
-                                   "price": "99.95",
-                                   "price_unit": "99.95"
-                               }, {
-                                   "idLengow": "9999_33544",
-                                   "idMP": "9999_33544",
-                                   "sku": {
-                                       "-field": "ID_PRODUCT",
-                                       "#text": "9999_33544"
-                                   },
-                                   "title": "Pantalon G-star rovic"
-                                            " slim, micro stretch "
-                                            "twill GS Dk Fig Taille "
-                                            "W30/L33",
-                                   "category": "Accueil > HOMME > "
-                                               "JEANS/PANTALONS > "
-                                               "PANTALONS",
-                                   "url_product": "http://lengow.com"
-                                                  "/product.php?id\\"
-                                                  "_product=11198",
-                                   "url_image": "http://lengow.com/"
-                                                "img/p/11199-42102-"
-                                                "large.jpg",
-                                   "quantity": "1",
-                                   "price": "99.95",
-                                   "price_unit": "99.95",
-                                   "status": 'cancel'}]}}})
+                      '999-2121515-6705141', order_data)
 
         order = self.env['sale.order'].search([('client_order_ref',
                                                 '=',
