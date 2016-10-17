@@ -57,7 +57,48 @@ class SaleOrder(models.Model):
         string='Lengow Bindings',
     )
 
-    is_from_lengow = fields.Boolean(string='Order imported from Lengow')
+    is_from_lengow = fields.Boolean(string='Order imported from Lengow',
+                                    compute='_is_from_lengow',
+                                    store=True)
+
+    lengow_total_amount = fields.Float(
+        string='Lengow Total amount',
+        digits_compute=dp.get_precision('Account'),
+        compute='_get_lengow_total_amount',
+        store=True
+    )
+    lengow_total_amount_tax = fields.Float(
+        string='Lengow Total amount w. tax',
+        digits_compute=dp.get_precision('Account'),
+        compute='_get_lengow_total_amount_tax',
+        store=True
+    )
+
+    @api.depends('lengow_bind_ids')
+    @api.multi
+    def _is_from_lengow(self):
+        for order in self:
+            order.is_from_lengow = len(order.lengow_bind_ids) > 0
+
+    @api.depends('lengow_bind_ids')
+    @api.multi
+    def _get_lengow_total_amount(self):
+        for order in self:
+            if len(order.lengow_bind_ids):
+                binding = order.lengow_bind_ids[0]
+                order.lengow_total_amount = binding.total_amount
+            else:
+                order.lengow_total_amount = False
+
+    @api.depends('lengow_bind_ids')
+    @api.multi
+    def _get_lengow_total_amount_tax(self):
+        for order in self:
+            if len(order.lengow_bind_ids):
+                binding = order.lengow_bind_ids[0]
+                order.lengow_total_amount_tax = binding.total_amount_tax
+            else:
+                order.lengow_total_amount_tax = False
 
 
 @lengow20

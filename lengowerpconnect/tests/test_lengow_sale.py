@@ -186,10 +186,12 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                                    "price": "99.95",
                                    "price_unit": "99.95"}]}}})
 
-        order = self.env['lengow.sale.order'].search([('client_order_ref',
-                                                       '=',
-                                                       '999-2121515-6705141')])
+        order = self.env['sale.order'].search([('client_order_ref',
+                                                '=',
+                                                '999-2121515-6705141')])
         self.assertEqual(len(order), 1)
+
+        self.assertTrue(order.is_from_lengow)
 
         # check partner linked
         self.assertEqual(order.partner_id.name, 'Lengow')
@@ -199,7 +201,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertFalse(order.user_id)
 
         # order should be linked to the right marketplace
-        self.assertEqual(order.marketplace_id.id, self.marketplace.id)
+        self.assertEqual(order.lengow_bind_ids[0].marketplace_id.id,
+                         self.marketplace.id)
 
         # order should be assigned to analytic for Amazon
         self.assertEqual(order.project_id.id, self.amazon_analytic.id)
@@ -212,8 +215,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(len(order.order_line), 3)
 
         # check amount total
-        self.assertEqual(order.total_amount, 305.65)
-        self.assertAlmostEqual(order.total_amount, order.amount_total)
+        self.assertEqual(order.lengow_total_amount, 305.65)
+        self.assertAlmostEqual(order.lengow_total_amount, order.amount_total)
 
         # check order lines
         order_line = order.order_line[0]
