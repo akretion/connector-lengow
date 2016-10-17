@@ -297,7 +297,8 @@ class LengowSaleOrderLineMapper(LengowImportMapper):
         binder = self.binder_for('lengow.product.product')
         product_id = binder.to_openerp(record['sku']['#text'], unwrap=True)
         assert product_id is not None, (
-            "product_id %s is not binded to a Lengow catalogue")
+            "product_id %s is not binded to a Lengow catalogue" %
+            record['sku']['#text'])
         return {'product_id': product_id}
 
 
