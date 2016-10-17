@@ -277,6 +277,10 @@ class SetUpLengowBase20(SetUpLengowBase):
         bind_wizard.bind_products()
         self.marketplace.payment_method_id.write({
             'journal_id': self.env.ref('account.bank_journal').id})
+        self.route = self.env['stock.location.route'].create({
+            'name': 'Amazon Delivery',
+            'sale_selectable': True})
+        self.marketplace.write({'route_id': self.route.id})
 
 
 class SetUpLengowBase30(SetUpLengowBase):

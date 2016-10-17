@@ -115,3 +115,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertTrue(order.payment_ids)
         self.assertEqual(order.residual, 0)
         self.assertAlmostEqual(order.amount_paid, order.amount_total)
+
+        # route for auto-delivery should be assigned on each line
+        self.assertTrue(order.order_line[0].route_id.id, self.route.id)
+        self.assertTrue(order.order_line[1].route_id.id, self.route.id)
+        self.assertFalse(order.order_line[2].route_id)

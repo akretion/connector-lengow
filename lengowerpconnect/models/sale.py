@@ -279,12 +279,24 @@ class LengowSaleOrderImporter(LengowImporter):
             % record['marketplace'])
         return marketplace
 
+    def _check_is_marketplacedelivering(self, record):
+        tracking_data = record.get('tracking_informations', {})
+
+        if tracking_data:
+            marketplacedelivering = tracking_data.get(
+                'tracking_deliveringByMarketPlace', "0")
+            return True if marketplacedelivering == "1" else False
+        return False
+
     def _create_data(self, map_record, **kwargs):
         marketplace = self._get_market_place(map_record.source)
+        is_marketplacedelivering = self._check_is_marketplacedelivering(
+            map_record.source)
         return super(LengowSaleOrderImporter, self)._create_data(
             map_record,
             marketplace=marketplace,
             lengow_order_id=self.lengow_id,
+            is_marketplacedelivering=is_marketplacedelivering,
             **kwargs)
 
     def _update_data(self, map_record, **kwargs):
@@ -359,6 +371,15 @@ class LengowSaleOrderLineMapper(LengowImportMapper):
             "product_id %s is not binded to a Lengow catalogue" %
             record['sku']['#text'])
         return {'product_id': product_id}
+
+    @mapping
+    def route_id(self, record):
+        if self.options.is_marketplacedelivering:
+            route = self.options.marketplace.route_id
+            assert route, ("No route defined on marketplace %s "
+                           "for auto-delivery"
+                           % self.options.marketplace.name)
+            return {'route_id': self.options.marketplace.route_id.id}
 
 
 @lengow

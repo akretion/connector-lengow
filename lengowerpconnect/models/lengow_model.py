@@ -270,6 +270,9 @@ class LengowMarketPlace(models.Model):
     payment_method_id = fields.Many2one(string='Payment Method',
                                         comodel_name='payment.method')
     sale_prefix_code = fields.Char(string='Prefix for Order Reference')
+    route_id = fields.Many2one(string='Route',
+                               comodel_name='stock.location.route',
+                               domain=[('sale_selectable', '=', True)])
 
     @api.multi
     def _get_account_analytic_id(self):
