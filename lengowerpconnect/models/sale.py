@@ -286,6 +286,14 @@ class LengowSaleOrderImporter(LengowImporter):
             lengow_order_id=self.lengow_id,
             **kwargs)
 
+    def _update_data(self, map_record, **kwargs):
+        marketplace = self._get_market_place(map_record.source)
+        return super(LengowSaleOrderImporter, self)._update_data(
+            map_record,
+            marketplace=marketplace,
+            lengow_order_id=self.lengow_id,
+            **kwargs)
+
     def _after_import(self, binding):
         self._create_payment(binding)
 
