@@ -7,12 +7,15 @@ from openerp import api, fields, models
 import openerp.addons.decimal_precision as dp
 from openerp.addons.connector.unit.mapper import mapping
 from openerp.addons.connector_ecommerce.sale import ShippingLineBuilder
+from openerp.addons.connector_ecommerce.unit.sale_order_onchange import\
+    SaleOrderOnChange
 
 from .backend import lengow, lengow20
 from .adapter import GenericAdapter20
 from .import_synchronizer import DelayedBatchImporter
 from .import_synchronizer import LengowImporter
 from .import_synchronizer import LengowImportMapper
+
 
 _logger = logging.getLogger(__name__)
 
@@ -187,7 +190,8 @@ class SaleOrderMapper(LengowImportMapper):
     def finalize(self, map_record, values):
         values.setdefault('order_line', [])
         values = self._add_shipping_line(map_record, values)
-        return values
+        onchange = self.unit_for(SaleOrderOnChange)
+        return onchange.play(values, values['lengow_order_line_ids'])
 
 
 @lengow20
@@ -299,4 +303,9 @@ class LengowSaleOrderLineMapper(LengowImportMapper):
 
 @lengow
 class LengowShippingLineBuilder(ShippingLineBuilder):
+    _model_name = 'lengow.sale.order'
+
+
+@lengow
+class LengowSaleOrderOnChange(SaleOrderOnChange):
     _model_name = 'lengow.sale.order'
