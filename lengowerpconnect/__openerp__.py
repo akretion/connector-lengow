@@ -25,6 +25,7 @@
         'views/product_view.xml',
         'views/lengow_model_view.xml',
         'views/lengowerpconnect_menu.xml',
+        'views/payment_method_view.xml',
         'wizards/lengow_product_unbinding_wizard_view.xml',
     ],
     "demo": [

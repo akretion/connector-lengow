@@ -181,6 +181,7 @@
                             <field name="backend_version" invisible='1'/>
                             <field name="homepage" widget='url' attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
                             <field name="description" attrs="{'readonly': ['|', ('backend_version', '=', '3.0'), ('backend_version', '=', False)]}"/>
+                            <field name="payment_method_id" readonly="1"/>
                         </group>
                         <group string="Options" name="options">
                             <field name="account_analytic_id" groups="sale.group_analytic_accounting" class="oe_read_only"/>

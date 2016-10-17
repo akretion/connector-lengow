@@ -7,5 +7,5 @@ from openerp import fields, models
 class PaymentMethod(models.Model):
     _inherit = 'payment.method'
 
-    marketplace_id = fields.Many2one(string='MarketPlace',
+    marketplace_id = fields.Many2one(string='Lengow MarketPlace',
                                      comodel_name='lengow.market.place')
