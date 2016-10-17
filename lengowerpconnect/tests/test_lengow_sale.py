@@ -212,8 +212,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(len(order.order_line), 3)
 
         # check amount total
-        self.assertEqual(order.lengow_total_amount, 305.65)
-        self.assertAlmostEqual(order.lengow_total_amount, order.amount_total)
+        self.assertEqual(order.total_amount, 305.65)
+        self.assertAlmostEqual(order.total_amount, order.amount_total)
 
         # check order lines
         order_line = order.order_line[0]

@@ -35,12 +35,12 @@ class LengowSaleOrder(models.Model):
         inverse_name='lengow_order_id',
         string='Lengow Order Lines'
     )
-    lengow_total_amount = fields.Float(
-        string='Lengow Total amount',
+    total_amount = fields.Float(
+        string='Total amount',
         digits_compute=dp.get_precision('Account')
     )
-    lengow_total_amount_tax = fields.Float(
-        string='Lengow Total amount w. tax',
+    total_amount_tax = fields.Float(
+        string='Total amount w. tax',
         digits_compute=dp.get_precision('Account')
     )
     lengow_order_id = fields.Char(string='Lengow Order ID')
@@ -118,8 +118,8 @@ class SaleOrderMapper(LengowImportMapper):
     direct = [('order_id', 'client_order_ref'),
               ('order_purchase_date', 'date_order'),
               ('order_comments', 'note'),
-              ('order_amount', 'lengow_total_amount'),
-              ('order_tax', 'lengow_total_amount_tax')]
+              ('order_amount', 'total_amount'),
+              ('order_tax', 'total_amount_tax')]
 
     children = [('cart', 'lengow_order_line_ids', 'lengow.sale.order.line'),
                 ]
