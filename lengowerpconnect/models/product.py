@@ -8,8 +8,6 @@ import ftputil.session
 from collections import OrderedDict
 
 from openerp import api, fields, models
-from openerp.addons.connector.queue.job import job
-from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.unit.mapper import ExportMapper
 from openerp.addons.connector.unit.mapper import mapping
 from openerp.addons.connector.unit.synchronizer import Exporter
@@ -17,7 +15,6 @@ from openerp.addons.connector.unit.synchronizer import Exporter
 from openerp.addons.connector.connector import ConnectorUnit
 
 from .backend import lengow
-from .connector import get_environment
 
 
 class LengowProductProduct(models.Model):
@@ -61,22 +58,6 @@ class LengowProductProduct(models.Model):
             product.sudo().write({'lengow_qty':
                                   product.with_context(location=location.id)
                                   [stock_field]})
-
-    @api.model
-    def _scheduler_export_binded_products(self, domain=None):
-        if domain is None:
-            domain = []
-        catalogues = self.env['lengow.catalogue'].search(domain)
-        for catalogue in catalogues:
-            session = ConnectorSession(self.env.cr, self.env.uid,
-                                       context=self.env.context)
-            export_binded_products_batch.delay(
-                session,
-                'lengow.product.product',
-                catalogue.id,
-                description="Export Lengow Catalogue %s"
-                " (Lengow Backend: %s)" %
-                (catalogue.name, catalogue.backend_id.name))
 
 
 class ProductProduct(models.Model):
@@ -306,14 +287,3 @@ class ProductExporter(Exporter):
 
         catalogue.sudo().write({'last_export_date': fields.Datetime.now()})
         return data
-
-
-@job(default_channel='root.lengow')
-def export_binded_products_batch(session, model_name, catalogue_id,
-                                 fields=None):
-    """ Export products binded to given backend """
-    catalogue = session.env['lengow.catalogue'].browse(catalogue_id)
-    env = get_environment(session, model_name, catalogue.backend_id.id)
-    products_exporter = env.get_connector_unit(ProductExporter)
-    return products_exporter.run(catalogue=catalogue,
-                                 products=catalogue.binded_product_ids)

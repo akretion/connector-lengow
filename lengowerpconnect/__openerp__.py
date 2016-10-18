@@ -19,6 +19,7 @@
         "sale_stock",
     ],
     "data": [
+        'data/lengowerpconnect_data.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'wizards/lengow_product_binding_wizard_view.xml',

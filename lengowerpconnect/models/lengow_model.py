@@ -10,12 +10,15 @@ from openerp.exceptions import Warning
 from openerp.addons.connector.unit.mapper import ImportMapper
 from openerp.addons.connector.unit.mapper import mapping
 from openerp.addons.connector.session import ConnectorSession
+from openerp.addons.connector.queue.job import job
 
 from .backend import lengow, lengow30
 from .adapter import GenericAdapter
 from .import_synchronizer import import_batch
 from .import_synchronizer import DirectBatchImporter
 from .import_synchronizer import LengowImporter
+from .connector import get_environment
+from .product import ProductExporter
 
 
 _logger = logging.getLogger(__name__)
@@ -126,6 +129,18 @@ class LengowBackend(models.Model):
             priority=1)
         self.write({'import_orders_from_date': import_start_time})
 
+    @api.model
+    def _lengow_backend(self, callback, domain=None):
+        if domain is None:
+            domain = []
+        backends = self.search(domain)
+        if backends:
+            getattr(backends, callback)()
+
+    @api.model
+    def _scheduler_import_sale_orders(self, domain=None):
+        self._lengow_backend('import_sale_orders', domain=domain)
+
 
 class LengowCatalogue(models.Model):
     _name = 'lengow.catalogue'
@@ -228,6 +243,22 @@ class LengowCatalogue(models.Model):
          'A catalogue already exists with the same product filename'
          ' in the same directory on the same host.'),
     ]
+
+    @api.model
+    def _scheduler_export_catalogue(self, domain=None):
+        if domain is None:
+            domain = []
+        catalogues = self.env['lengow.catalogue'].search(domain)
+        for catalogue in catalogues:
+            session = ConnectorSession(self.env.cr, self.env.uid,
+                                       context=self.env.context)
+            export_catalogue_batch.delay(
+                session,
+                'lengow.product.product',
+                catalogue.id,
+                description="Export Lengow Catalogue %s"
+                " (Lengow Backend: %s)" %
+                (catalogue.name, catalogue.backend_id.name))
 
 
 class LengowMarketPlace(models.Model):
@@ -346,3 +377,14 @@ class LengowMarketPlaceImporter(LengowImporter):
     _model_name = 'lengow.market.place'
 
     _base_mapper = LengowMarketPlaceMapper
+
+
+@job(default_channel='root.lengow')
+def export_catalogue_batch(session, model_name, catalogue_id,
+                           fields=None):
+    """ Export products binded to given backend """
+    catalogue = session.env['lengow.catalogue'].browse(catalogue_id)
+    env = get_environment(session, model_name, catalogue.backend_id.id)
+    products_exporter = env.get_connector_unit(ProductExporter)
+    return products_exporter.run(catalogue=catalogue,
+                                 products=catalogue.binded_product_ids)
