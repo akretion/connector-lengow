@@ -46,6 +46,7 @@ class LengowSaleOrder(models.Model):
     lengow_order_id = fields.Char(string='Lengow Order ID')
     marketplace_id = fields.Many2one(string='MarketPlace',
                                      comodel_name='lengow.market.place')
+    id_flux = fields.Char('Id Flux on Lengow')
 
 
 class SaleOrder(models.Model):
@@ -240,6 +241,10 @@ class SaleOrderMapper(LengowImportMapper):
         else:
             name = record['order_id']
         return {'name': name}
+
+    @mapping
+    def id_flux(self, record):
+        return {'id_flux': record['idFlux']}
 
     def finalize(self, map_record, values):
         values.setdefault('order_line', [])

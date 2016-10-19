@@ -69,6 +69,9 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(order.lengow_bind_ids[0].marketplace_id.id,
                          self.marketplace.id)
 
+        # id flux should be stored on order
+        self.assertEqual(order.lengow_bind_ids[0].id_flux, '99128')
+
         # order should be assigned to analytic for Amazon
         self.assertEqual(order.project_id.id, self.amazon_analytic.id)
 
