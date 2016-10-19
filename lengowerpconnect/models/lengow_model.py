@@ -219,7 +219,7 @@ class LengowCatalogue(models.Model):
 
     @api.multi
     def export_binded_products(self):
-        self.env['lengow.product.product']._scheduler_export_binded_products(
+        self._scheduler_export_catalogue(
             domain=[('id', 'in', self.ids)])
 
     @api.multi
