@@ -27,5 +27,21 @@
             <field eval="'()'" name="args"/>
         </record>
 
+        <record id="excep_wrong_total_amount" model="sale.exception">
+            <field name="name">Total Amount differs from Lengow</field>
+            <field name="description">The amount computed in Odoo doesn't match with the amount in Lengow.
+
+Cause:
+The taxes are probably different between Odoo and Lengow. A fiscal position could have changed the final price.
+
+Resolution:
+Check your taxes and fiscal positions configuration and correct them if necessary.</field>
+            <field name="sequence">30</field>
+            <field name="model">sale.order</field>
+            <field name="code">if order.lengow_bind_ids and abs(order.amount_total - order.lengow_total_amount) >= 0.01:
+    failed = True</field>
+            <field name="active" eval="True"/>
+        </record>
+
     </data>
 </openerp>
