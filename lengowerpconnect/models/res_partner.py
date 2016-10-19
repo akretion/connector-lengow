@@ -56,7 +56,7 @@ class PartnerImporter(LengowImporter):
     _model_name = ['lengow.res.partner']
 
     _base_mapper = PartnerImportMapper
-    _discriminant_fields = ['city', 'email']
+    _discriminant_fields = ['firstname', 'lastname', 'city', 'email']
     _prefix = False
 
     def _clean_data_keys(self, data):
