@@ -50,7 +50,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'ID_PRODUCT': '9999_33544',
             'NAME_PRODUCT': 'Blank DVD-RW',
             'PRICE_PRODUCT': '40.59',
-            'QUANTITY': '-3.0',
+            'QUANTITY': '-3',
             'SUPPLIER_CODE': '',
             'URL_IMAGE': 'url_image',
             'URL_PRODUCT': 'url_product'}
@@ -102,7 +102,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'ID_PRODUCT': '9999_33544',
             'NAME_PRODUCT': 'DVD-RW vierge',
             'PRICE_PRODUCT': '40.59',
-            'QUANTITY': '-3.0',
+            'QUANTITY': '-3',
             'SUPPLIER_CODE': '',
             'URL_IMAGE': 'url_image',
             'URL_PRODUCT': 'url_product'}
@@ -158,7 +158,7 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'ID_PRODUCT': '9999_33544',
             'NAME_PRODUCT': 'Blank DVD-RW',
             'PRICE_PRODUCT': '36.53',
-            'QUANTITY': '-3.0',
+            'QUANTITY': '-3',
             'SUPPLIER_CODE': '',
             'URL_IMAGE': 'url_image',
             'URL_PRODUCT': 'url_product'}

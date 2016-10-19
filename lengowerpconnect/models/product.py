@@ -178,7 +178,8 @@ class ProductExportMapper(ExportMapper):
 
     @mapping
     def QUANTITY(self, record):
-        return {'QUANTITY': record.lengow_qty}
+        qty = int(record.lengow_qty)
+        return {'QUANTITY': qty}
 
 
 @lengow
