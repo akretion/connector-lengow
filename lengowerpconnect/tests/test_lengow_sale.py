@@ -37,9 +37,9 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
             jobs = self.env['queue.job'].search([TRUE_LEAF])
 
             self.assertEqual(len(jobs), 1)
-            job_names = [job.name for job in jobs]
-            self.assertIn('Import lengow.sale.order 999-2121515-6705141'
-                          ' from Lengow Backend Test Lengow', job_names)
+            self.assertEqual(
+                jobs.name, 'Import lengow.sale.order 999-2121515-6705141'
+                ' from Lengow Backend Test Lengow')
 
     def test_import_sale_order(self):
         session = ConnectorSession.from_env(self.env)
