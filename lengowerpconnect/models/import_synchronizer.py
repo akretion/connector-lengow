@@ -80,7 +80,7 @@ class LengowImporter(Importer):
         '''
         discriminant_values = dict((key, record_data[key])
                                    for key in self._discriminant_fields)
-        hashtring = ''.join(discriminant_values)
+        hashtring = ''.join(discriminant_values.values())
         if not hashtring:
             return False
         hash_object = hashlib.sha1(hashtring.encode())
@@ -101,7 +101,7 @@ class LengowImporter(Importer):
         :param lengow_data: data of the record on Lengow
         """
         if not lengow_id:
-            lengow_id = self._generate_hash_key(lengow_data)
+            lengow_id = self._generate_hash_key(lengow_data, clean_data=False)
 
         self.lengow_id = lengow_id
         self.lengow_record = lengow_data

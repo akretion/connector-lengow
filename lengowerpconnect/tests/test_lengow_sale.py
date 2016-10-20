@@ -18,6 +18,27 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
     def setUp(self):
         super(TestImportSaleOrders20, self).setUp()
 
+    def test_import_partner(self):
+        session = ConnectorSession.from_env(self.env)
+        order_message = self.json_data['orders']['json']
+        order_data = order_message['orders'][0]
+        import_record(session,
+                      'lengow.sale.order',
+                      self.backend.id,
+                      '999-2121515-6705141', order_data)
+        order = self.env['sale.order'].search([('client_order_ref',
+                                                '=',
+                                                '999-2121515-6705141')])
+        self.assertEqual(order.partner_id.name, "Lengow A")
+        self.assertEqual(order.partner_id.email,
+                         "LengowA@marketplace.amazon.de")
+        self.assertEqual(order.partner_id.city, "Nantes")
+        self.assertEqual(order.partner_id.zip, "44000")
+        self.assertEqual(order.partner_id.phone, "099999689492")
+        self.assertEqual(order.partner_id.mobile, "099999689493")
+        self.assertEqual(order.partner_shipping_id.name, "Lengow B")
+        self.assertEqual(order.partner_invoice_id.name, "Lengow A")
+
     def test_import_sale_orders(self):
         with mock.patch(self.get_method) as mock_get:
             # mock get request for orders data
@@ -59,8 +80,8 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(order.name, 'AMAZON-999-2121515-6705141')
 
         # check partner linked
-        self.assertEqual(order.partner_id.name, 'Lengow')
-        self.assertEqual(order.partner_id.id, order.partner_shipping_id.id)
+        self.assertEqual(order.partner_id.name, 'Lengow A')
+        self.assertEqual(order.partner_id.id, order.partner_invoice_id.id)
 
         # order should not be assigned to a vendor
         self.assertFalse(order.user_id)

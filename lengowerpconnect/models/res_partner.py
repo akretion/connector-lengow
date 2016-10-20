@@ -81,8 +81,9 @@ class PartnerImporter(LengowImporter):
             data[newkey] = data.pop(key)
         return data
 
-    def _generate_hash_key(self, record_data):
-        record_data = self._clean_data_keys(record_data)
+    def _generate_hash_key(self, record_data, clean_data=True):
+        if clean_data:
+            record_data = self._clean_data_keys(record_data)
         return super(PartnerImporter, self)._generate_hash_key(record_data)
 
     def run(self, lengow_id, lengow_data):
