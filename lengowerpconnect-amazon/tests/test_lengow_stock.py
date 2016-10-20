@@ -48,3 +48,18 @@ class TestStock20(common.SetUpLengowBase20):
             mock_post.assert_called_with(
                 'https://wsdl.lengow.com/wsdl/amazon/99128/999-2121515-6705141'
                 '/acceptOrder.xml', params={}, data={}, headers={})
+
+    def test_export_picking_done_tracking(self):
+        with mock.patch(self.post_method) as mock_post:
+            mock_post = self._configure_mock_request('amazon_update',
+                                                     mock_post)
+            self.picking.write({'carrier_tracking_ref': 'tracking code test'})
+            export_picking_done(self.session,
+                                'lengow.stock.picking',
+                                self.picking.lengow_bind_ids.id)
+            mock_post.assert_called_with(
+                'https://wsdl.lengow.com/wsdl/amazon/99128/999-2121515-6705141'
+                '/acceptOrder.xml',
+                params={'colis_idTracking': 'tracking code test',
+                        'transporteur': 'Normal Delivery Charges'},
+                data={}, headers={})

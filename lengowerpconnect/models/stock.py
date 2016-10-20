@@ -59,16 +59,24 @@ class LengowPickingExporter(Exporter):
         picking = self.env['lengow.stock.picking'].browse(picking_id)
         sale = picking.sale_id
         marketplace = sale.lengow_bind_ids.marketplace_id.lengow_id
-        marketplace_conf = MarketPlaceConfigurator().get_configurator(
+        config = MarketPlaceConfigurator().get_configurator(
             self.env, marketplace)
-        assert marketplace_conf is not None, (
+        assert config is not None, (
             'No MarketplaceConfigurator found for %s' % marketplace)
         adapter = self.unit_for(StockPickingAdapter)
-        api_url = marketplace_conf().get_export_picking_api(
+        api_url = config().get_export_picking_api(
             sale.lengow_bind_ids[0].id_flux,
             sale.lengow_bind_ids[0].lengow_id)
-        adapter.process_request(requests.post, api_url)
-        return
+        tracking_params = config().get_export_picking_tracking_params()
+        params = {}
+        if tracking_params and picking.carrier_tracking_ref:
+            tracking_params[config._param_tracking_code_name] = \
+                picking.carrier_tracking_ref
+            tracking_params[config._param_tracking_carrier_name] = \
+                picking.carrier_id.name or ''
+            params.update(tracking_params)
+        adapter.process_request(requests.post, api_url,
+                                params=params)
 
 
 @on_picking_out_done
