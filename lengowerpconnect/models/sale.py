@@ -145,7 +145,7 @@ class SaleOrderBatchImporter(DelayedBatchImporter):
             filters,
             from_date=from_date,
             to_date=to_date)
-        orders_data = result['statistics']['orders']['order'] or []
+        orders_data = result['orders'] or []
         order_ids = [data['order_id'] for data in orders_data]
         _logger.info('Search for lengow sale orders %s returned %s',
                      filters, order_ids)
@@ -319,7 +319,7 @@ class LengowSaleOrderImporter(LengowImporter):
         # simplify message structure for child mapping and remove refused
         # or cancelled lines
         lines = []
-        for line in lengow_data['cart']['products']['product']:
+        for line in lengow_data['cart']['products']:
             if not line.get('status', False) in ('cancel', 'refused'):
                 lines.append(line)
         lengow_data['cart'] = lines
@@ -371,10 +371,10 @@ class LengowSaleOrderLineMapper(LengowImportMapper):
     @mapping
     def product_id(self, record):
         binder = self.binder_for('lengow.product.product')
-        product_id = binder.to_openerp(record['sku']['#text'], unwrap=True)
+        product_id = binder.to_openerp(record['sku'], unwrap=True)
         assert product_id is not None, (
             "product_id %s is not binded to a Lengow catalogue" %
-            record['sku']['#text'])
+            record['sku'])
         return {'product_id': product_id}
 
     @mapping

@@ -23,7 +23,7 @@ class TestStock20(common.SetUpLengowBase20):
                 'json': {}}})
         self.session = ConnectorSession.from_env(self.env)
         order_message = self.json_data['orders']['json']
-        order_data = order_message['statistics']['orders']['order'][0]
+        order_data = order_message['orders'][0]
         import_record(self.session,
                       'lengow.sale.order',
                       self.backend.id,

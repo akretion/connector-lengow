@@ -44,7 +44,7 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
     def test_import_sale_order(self):
         session = ConnectorSession.from_env(self.env)
         order_message = self.json_data['orders']['json']
-        order_data = order_message['statistics']['orders']['order'][0]
+        order_data = order_message['orders'][0]
         import_record(session,
                       'lengow.sale.order',
                       self.backend.id,
