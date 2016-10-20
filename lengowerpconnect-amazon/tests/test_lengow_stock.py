@@ -46,7 +46,7 @@ class TestStock20(common.SetUpLengowBase20):
                                 'lengow.stock.picking',
                                 self.picking.lengow_bind_ids.id)
             mock_post.assert_called_with(
-                'https://wsdl.lengow.com/wsdl/amazon/99128/999-2121515-6705141'
+                'http://anywsdlurl/amazon/99128/999-2121515-6705141'
                 '/acceptOrder.xml', params={}, data={}, headers={})
 
     def test_export_picking_done_tracking(self):
@@ -58,7 +58,7 @@ class TestStock20(common.SetUpLengowBase20):
                                 'lengow.stock.picking',
                                 self.picking.lengow_bind_ids.id)
             mock_post.assert_called_with(
-                'https://wsdl.lengow.com/wsdl/amazon/99128/999-2121515-6705141'
+                'http://anywsdlurl/amazon/99128/999-2121515-6705141'
                 '/acceptOrder.xml',
                 params={'colis_idTracking': 'tracking code test',
                         'transporteur': 'Normal Delivery Charges'},

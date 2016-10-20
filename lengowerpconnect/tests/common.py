@@ -43,6 +43,7 @@ class SetUpLengowBase20(SetUpLengowBase):
             {'name': 'Test Lengow',
              'version': '2.0',
              'location': 'http://anyurl',
+             'wsdl_location': 'http://anywsdlurl',
              'id_client': 'a4a506440102b8d06a0f63fdd1eadd5f',
              'warehouse_id': self.warehouse.id}
         )
@@ -119,9 +120,9 @@ class SetUpLengowBase20(SetUpLengowBase):
                         "billing_address": {
                             "billing_society": "",
                             "billing_civility": "",
-                            "billing_lastname": "Lengow",
+                            "billing_lastname": "Lengow A",
                             "billing_firstname": "",
-                            "billing_email": "Lengow@marketplace."
+                            "billing_email": "LengowA@marketplace."
                                              "amazon.de",
                             "billing_address": "Lengow",
                             "billing_address_2": "",
@@ -132,13 +133,13 @@ class SetUpLengowBase20(SetUpLengowBase):
                             "billing_country_iso": "FR",
                             "billing_phone_home": "099999689492",
                             "billing_phone_office": "",
-                            "billing_phone_mobile": "",
+                            "billing_phone_mobile": "099999689493",
                             "billing_full_address": "Lengow"
                         },
                         "delivery_address": {
                             "delivery_society": "",
                             "delivery_civility": "",
-                            "delivery_lastname": "Lengow",
+                            "delivery_lastname": "Lengow B",
                             "delivery_firstname": "",
                             "delivery_email": "",
                             "delivery_address": "Lengow",

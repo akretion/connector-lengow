@@ -32,10 +32,12 @@
                                     <group colspan="4" col="4">
                                         <field name="version" colspan="4"/>
                                         <field name="location" placeholder="e.g. http://my.lengow.com"
-                                            colspan="4" widget="url"/>
-                                        <field name="access_token" colspan="2" attrs="{'invisible': [('version', '!=', '3.0')]}"/>
-                                        <field name="secret" password="1" colspan="2" attrs="{'invisible': [('version', '!=', '3.0')]}"/>
-                                        <field name="id_client" colspan="2" attrs="{'invisible': [('version', '!=', '2.0')], 'required': [('version', '=', '2.0')]}"/>
+                                            colspan="2" widget="url"/>
+                                         <field name="wsdl_location" placeholder="e.g. http://my.lengow.com"
+                                            colspan="2" widget="url"/>
+                                        <field name="access_token" colspan="2"/>
+                                        <field name="secret" password="1" colspan="2"/>
+                                        <field name="id_client" colspan="2"/>
                                     </group>
                                 </page>
                                 <page string="Catalogues" name="catalogue">

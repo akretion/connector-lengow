@@ -47,6 +47,10 @@ class LengowBackend(models.Model):
         required=True,
         help="Url to Lengow application",
     )
+    wsdl_location = fields.Char(
+        string='Wsdl Location',
+        help="Url to Lengow Wsdl (To update Orders)",
+    )
     access_token = fields.Char(
         string='Access Token',
         help="WebService Access Token",

@@ -12,7 +12,7 @@ class AmazonMarketPlaceConfigurator(MarketPlaceConfigurator):
     _param_tracking_carrier_name = 'transporteur'
 
     def get_export_picking_api(self, id_flux, order_id):
-        url = 'https://wsdl.lengow.com/wsdl/amazon/%s/%s/acceptOrder.xml'
+        url = 'amazon/%s/%s/acceptOrder.xml'
         return url % (id_flux, order_id)
 
     def get_export_picking_tracking_params(self):

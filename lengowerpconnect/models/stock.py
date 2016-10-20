@@ -64,9 +64,10 @@ class LengowPickingExporter(Exporter):
         assert config is not None, (
             'No MarketplaceConfigurator found for %s' % marketplace)
         adapter = self.unit_for(StockPickingAdapter)
-        api_url = config().get_export_picking_api(
-            sale.lengow_bind_ids[0].id_flux,
-            sale.lengow_bind_ids[0].lengow_id)
+        api_url = '%s/%s' % (
+            self.backend_record.wsdl_location,
+            config().get_export_picking_api(sale.lengow_bind_ids[0].id_flux,
+                                            sale.lengow_bind_ids[0].lengow_id))
         tracking_params = config().get_export_picking_tracking_params()
         params = {}
         if tracking_params and picking.carrier_tracking_ref:
