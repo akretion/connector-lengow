@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from openerp.addons.connector.connector import get_openerp_module,\
+    is_module_installed
 
 
 class MetaMarketPlaceConfigurator(type):
@@ -16,7 +18,7 @@ class MetaMarketPlaceConfigurator(type):
 
 class MarketPlaceConfigurator(object):
     '''
-        For lLengow API 2.0, each market place as its own way to update
+        For Lengow API 2.0, each market place as its own way to update
         orders. This class should be inherited and specified for each
         marketplace
     '''
@@ -26,8 +28,15 @@ class MarketPlaceConfigurator(object):
 
     __metaclass__ = MetaMarketPlaceConfigurator
 
+    def get_configurator(self, env, marketplace):
+        configurator = self.__class__.by_marketplace.get(marketplace, None)
+        if configurator:
+            if is_module_installed(env, get_openerp_module(configurator)):
+                return configurator
+        return None
+
     def get_export_picking_api(self, id_flux, order_id):
         return None
 
-    def get_export_picking_params(self):
+    def get_export_picking_tracking_params(self):
         return {}

@@ -11,7 +11,6 @@ from ..models.stock import export_picking_done
 
 
 class TestStock20(common.SetUpLengowBase20):
-    ''' Test form sale orders with API 2.0'''
 
     def setUp(self):
         super(TestStock20, self).setUp()

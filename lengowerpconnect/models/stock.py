@@ -2,6 +2,8 @@
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import requests
+
 from openerp import models, fields
 
 from openerp.addons.connector.event import on_record_create
@@ -54,16 +56,18 @@ class LengowPickingExporter(Exporter):
     _model_name = ['lengow.stock.picking']
 
     def run(self, picking_id):
-        picking = self.env['stock.picking'].browse(picking_id)
+        picking = self.env['lengow.stock.picking'].browse(picking_id)
         sale = picking.sale_id
         marketplace = sale.lengow_bind_ids.marketplace_id.lengow_id
-        marketplace_conf = MarketPlaceConfigurator.by_marketplace.get(
-            marketplace, None)
+        marketplace_conf = MarketPlaceConfigurator().get_configurator(
+            self.env, marketplace)
         assert marketplace_conf is not None, (
             'No MarketplaceConfigurator found for %s' % marketplace)
         adapter = self.unit_for(StockPickingAdapter)
-        api = marketplace_conf.get_export_picking_api(sale.id_flux,
-                                                      sale.lengow_id)
+        api_url = marketplace_conf().get_export_picking_api(
+            sale.lengow_bind_ids[0].id_flux,
+            sale.lengow_bind_ids[0].lengow_id)
+        adapter.process_request(requests.post, api_url)
         return
 
 
