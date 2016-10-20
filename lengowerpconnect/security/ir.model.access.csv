@@ -16,3 +16,7 @@
 "access_lengow_sale_order_line_stock_user","lengow_sale_order_line warehouse user","model_lengow_sale_order_line","stock.group_stock_user",1,1,0,0
 "access_lengow_res_partner_sale_salesman","lengow_res_partner","model_lengow_res_partner","base.group_sale_salesman",1,1,1,0
 "access_lengow_res_partner_sale_manager","lengow_res_partner","model_lengow_res_partner","base.group_sale_manager",1,1,1,0
+"access_stock_picking_out_user","lengow_stock.picking user","model_lengow_stock_picking","stock.group_stock_user",1,1,1,1
+"access_stock_picking_out_manager","lengow_stock.picking manager","model_lengow_stock_picking","stock.group_stock_manager",1,1,1,1
+"access_lengow_sale_order_stock_user","lengow_sale_order warehouse user","model_lengow_sale_order","stock.group_stock_user",1,1,0,0
+"access_lengow_sale_order_line_stock_user","lengow_sale_order_line warehouse user","model_lengow_sale_order_line","stock.group_stock_user",1,1,0,0
