@@ -69,25 +69,12 @@ class LengowPickingExporter(Exporter):
             self.backend_record.wsdl_location,
             config().get_export_picking_api(sale.lengow_bind_ids[0].id_flux,
                                             sale.lengow_bind_ids[0].lengow_id))
-        tracking_params = config().get_export_picking_tracking_params()
-        params = {}
-        if config._tracking_mandatory and (not picking.carrier_tracking_ref or
-                                           not picking.carrier_id.name):
-            raise ValidationError('The tracking number and tracking carrier'
-                                  'are mandatory for marketplace %s' %
-                                  config.marketplace)
-        if tracking_params and picking.carrier_tracking_ref:
-            if picking.carrier_id:
-                # For some marketplaces, the carrier is limited to a restricted
-                # list (e.g.: Fnac)
-                config().check_carrier_code(picking.carrier_id.lengow_value)
-            tracking_params[config._param_tracking_code_name] = \
-                picking.carrier_tracking_ref
-            tracking_params[config._param_tracking_carrier_name] = \
-                picking.carrier_id.lengow_value or ''
-            params.update(tracking_params)
+        tracking_params = config().configure_tracking_params(
+            picking.carrier_tracking_ref,
+            picking.carrier_id.lengow_value or False)
+
         adapter.process_request(requests.post, api_url,
-                                params=params)
+                                params=tracking_params)
 
 
 @on_picking_out_done
