@@ -15,6 +15,7 @@ from .adapter import GenericAdapter20
 from .backend import lengow20
 from .configurator import MarketPlaceConfigurator
 from .connector import get_environment
+from openerp.exceptions import ValidationError
 
 
 class LengowStockPicking(models.Model):
@@ -70,11 +71,20 @@ class LengowPickingExporter(Exporter):
                                             sale.lengow_bind_ids[0].lengow_id))
         tracking_params = config().get_export_picking_tracking_params()
         params = {}
+        if config._tracking_mandatory and (not picking.carrier_tracking_ref or
+                                           not picking.carrier_id.name):
+            raise ValidationError('The tracking number and tracking carrier'
+                                  'are mandatory for marketplace %s' %
+                                  config.marketplace)
         if tracking_params and picking.carrier_tracking_ref:
+            if picking.carrier_id:
+                # For some marketplaces, the carrier is limited to a restricted
+                # list (e.g.: Fnac)
+                config().check_carrier_code(picking.carrier_id.lengow_value)
             tracking_params[config._param_tracking_code_name] = \
                 picking.carrier_tracking_ref
             tracking_params[config._param_tracking_carrier_name] = \
-                picking.carrier_id.name or ''
+                picking.carrier_id.lengow_value or ''
             params.update(tracking_params)
         adapter.process_request(requests.post, api_url,
                                 params=params)

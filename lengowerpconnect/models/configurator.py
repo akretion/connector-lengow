@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 from openerp.addons.connector.connector import get_openerp_module,\
     is_module_installed
+from openerp.exceptions import ValidationError
 
 
 class MetaMarketPlaceConfigurator(type):
@@ -25,6 +26,8 @@ class MarketPlaceConfigurator(object):
     marketplace = None
     _param_tracking_code_name = None
     _param_tracking_carrier_name = None
+    _tracking_mandatory = False
+    _restricted_carrier_code = {}
 
     __metaclass__ = MetaMarketPlaceConfigurator
 
@@ -40,3 +43,10 @@ class MarketPlaceConfigurator(object):
 
     def get_export_picking_tracking_params(self):
         return {}
+
+    def check_carrier_code(self, carrier_code):
+        if self._restricted_carrier_code:
+            if carrier_code not in self._restricted_carrier_code:
+                raise ValidationError('Carrier code %s is not allowed for'
+                                      ' marketplace %s' %
+                                      (carrier_code, self.marketplace))
