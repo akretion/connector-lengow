@@ -14,4 +14,4 @@ class DeliveryCarrier(models.Model):
 
     def _compute_lengow_value(self):
         for carrier in self:
-            carrier.lengow_value = self.lengow_code or self.name
+            carrier.lengow_value = carrier.lengow_code or carrier.name
