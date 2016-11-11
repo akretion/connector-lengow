@@ -2,6 +2,7 @@
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import logging
+from datetime import timedelta, date
 
 from openerp import api, fields, models
 import openerp.addons.decimal_precision as dp
@@ -113,7 +114,8 @@ class LengowSaleOrderAdapter(GenericAdapter20):
         id_flux = filters.pop('id_flux', 'orders')
         state = filters.pop('state', 'processing')
         if not from_date:
-            from_date = fields.Date.today()
+            start_date = date.today() - timedelta(days=1)
+            from_date = fields.Date.to_string(start_date)
         if not to_date:
             to_date = fields.Date.today()
         self._api = str(self._api % (from_date,

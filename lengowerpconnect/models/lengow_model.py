@@ -2,6 +2,7 @@
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import logging
+from datetime import timedelta, date
 
 from openerp import api, fields, models
 from openerp.tools.translate import _
@@ -118,7 +119,8 @@ class LengowBackend(models.Model):
 
     @api.multi
     def import_sale_orders(self):
-        import_start_time = fields.Date.today()
+        start_date = date.today() - timedelta(days=1)
+        import_start_time = fields.Date.to_string(start_date)
         session = ConnectorSession.from_env(self.env)
         if self.import_orders_from_date:
             from_date = self.import_orders_from_date or None
@@ -129,7 +131,7 @@ class LengowBackend(models.Model):
             'lengow.sale.order',
             self.id, {
                 'from_date': from_date,
-                'to_date': import_start_time},
+                'to_date': fields.Date.today()},
             priority=1)
         self.write({'import_orders_from_date': import_start_time})
 

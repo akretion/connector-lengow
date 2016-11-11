@@ -2,9 +2,12 @@
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 import mock
+from datetime import timedelta, date
 
 from . import common
+from openerp import fields
 from openerp.addons.connector.session import ConnectorSession
+from openerp.tools.safe_eval import safe_eval
 from openerp.osv.expression import TRUE_LEAF
 
 from ..models.connector import get_environment
@@ -38,6 +41,36 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertEqual(order.partner_id.mobile, "099999689493")
         self.assertEqual(order.partner_shipping_id.name, "Lengow B")
         self.assertEqual(order.partner_invoice_id.name, "Lengow A")
+
+    def test_import_sale_order_date_filter(self):
+        with mock.patch(self.get_method) as mock_get:
+            # mock get request for orders data
+            mock_get = self._configure_mock_request('orders', mock_get)
+            env = get_environment(ConnectorSession.from_env(self.env),
+                                  'lengow.sale.order', self.backend.id)
+            importer = SaleOrderBatchImporter(env)
+            importer.run()
+            date_from = fields.Date.to_string(date.today() - timedelta(days=1))
+            date_to = fields.Date.today()
+            expected_url = 'http://anyurl/V2/%s/%s/'\
+                'a4a506440102b8d06a0f63fdd1eadd5f/0/orders/'\
+                'commands/processing/json/' % (date_from, date_to)
+            mock_get.assert_called_with(expected_url, data={}, params={},
+                                        headers={})
+
+    def test_import_sale_order_date_backend(self):
+        date_from = fields.Date.to_string(date.today() - timedelta(days=5))
+        self.backend.import_orders_from_date = date_from
+        self.backend.import_sale_orders()
+        job = self.env['queue.job'].search([TRUE_LEAF])
+        self.assertEqual(len(job), 1)
+        args_start = job.func_string.index('(')
+        args = safe_eval(job.func_string[args_start:])
+        self.assertEqual(args[2]['from_date'], date_from)
+        self.assertEqual(args[2]['to_date'], fields.Date.today())
+        self.assertEqual(self.backend.import_orders_from_date,
+                         fields.Date.to_string(date.today() - timedelta(
+                             days=1)))
 
     def test_import_sale_orders(self):
         with mock.patch(self.get_method) as mock_get:
