@@ -50,9 +50,6 @@ class TestStock20(common.SetUpLengowBase20):
                 export_picking_done(self.session,
                                     'lengow.stock.picking',
                                     self.picking.lengow_bind_ids.id)
-                mock_post.assert_called_with(
-                    'http://anywsdlurl/fnac/99128/999-2121515-6705141'
-                    '/shipped.xml', params={}, data={}, headers={})
 
     def test_export_picking_done_tracking_code(self):
         with mock.patch(self.post_method) as mock_post:
