@@ -6,7 +6,7 @@ from openerp.addons.lengowerpconnect.models.configurator import\
     MarketPlaceConfigurator
 
 
-class AmazonMarketPlaceConfigurator(MarketPlaceConfigurator):
+class NatdecPlaceConfigurator(MarketPlaceConfigurator):
     marketplace = 'natdec'
     _param_tracking_code_name = 'tracking_number'
     _param_tracking_url_name = 'tracking_url'

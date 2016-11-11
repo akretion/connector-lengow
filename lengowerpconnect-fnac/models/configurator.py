@@ -6,7 +6,7 @@ from openerp.addons.lengowerpconnect.models.configurator import\
     MarketPlaceConfigurator
 
 
-class AmazonMarketPlaceConfigurator(MarketPlaceConfigurator):
+class FnacMarketPlaceConfigurator(MarketPlaceConfigurator):
     marketplace = 'fnac'
     _param_tracking_code_name = 'trackingColis'
     _param_tracking_carrier_name = 'transporteurColis'
