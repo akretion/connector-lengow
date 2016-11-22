@@ -72,6 +72,23 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                          fields.Date.to_string(date.today() - timedelta(
                              days=1)))
 
+    def test_import_sale_order_filters(self):
+        date_from = fields.Date.to_string(date.today() - timedelta(days=5))
+        self.backend.import_orders_from_date = date_from
+        self.backend.import_sale_orders(filters={'id_flux': 12345,
+                                                 'state': 'shipped'})
+        job = self.env['queue.job'].search([TRUE_LEAF])
+        self.assertEqual(len(job), 1)
+        args_start = job.func_string.index('(')
+        args = safe_eval(job.func_string[args_start:])
+        self.assertEqual(args[2]['from_date'], date_from)
+        self.assertEqual(args[2]['to_date'], fields.Date.today())
+        self.assertEqual(args[2]['id_flux'], 12345)
+        self.assertEqual(args[2]['state'], 'shipped')
+        self.assertEqual(self.backend.import_orders_from_date,
+                         fields.Date.to_string(date.today() - timedelta(
+                             days=1)))
+
     def test_import_sale_orders(self):
         with mock.patch(self.get_method) as mock_get:
             # mock get request for orders data

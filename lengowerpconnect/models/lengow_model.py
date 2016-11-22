@@ -118,7 +118,7 @@ class LengowBackend(models.Model):
                 str(e).decode('utf-8', 'ignore'))
 
     @api.multi
-    def import_sale_orders(self):
+    def import_sale_orders(self, filters={}):
         start_date = date.today() - timedelta(days=1)
         import_start_time = fields.Date.to_string(start_date)
         session = ConnectorSession.from_env(self.env)
@@ -126,26 +126,30 @@ class LengowBackend(models.Model):
             from_date = self.import_orders_from_date or None
         else:
             from_date = None
+        if 'from_date' not in filters:
+            filters['from_date'] = from_date
+        if 'to_date' not in filters:
+            filters['to_date'] = fields.Date.today()
         import_batch.delay(
             session,
             'lengow.sale.order',
-            self.id, {
-                'from_date': from_date,
-                'to_date': fields.Date.today()},
+            self.id,
+            filters,
             priority=1)
         self.write({'import_orders_from_date': import_start_time})
 
     @api.model
-    def _lengow_backend(self, callback, domain=None):
+    def _lengow_backend(self, callback, domain=None, filters={}):
         if domain is None:
             domain = []
         backends = self.search(domain)
         if backends:
-            getattr(backends, callback)()
+            getattr(backends, callback)(filters)
 
     @api.model
-    def _scheduler_import_sale_orders(self, domain=None):
-        self._lengow_backend('import_sale_orders', domain=domain)
+    def _scheduler_import_sale_orders(self, domain=None, filters={}):
+        self._lengow_backend('import_sale_orders', domain=domain,
+                             filters=filters)
 
 
 class LengowCatalogue(models.Model):

@@ -314,6 +314,10 @@ class LengowSaleOrderImporter(LengowImporter):
         # sale order update is not managed
         return
 
+    def _update(self, binding, data):
+        # sale order update is not managed
+        return
+
     def _after_import(self, binding):
         self._create_payment(binding)
 
