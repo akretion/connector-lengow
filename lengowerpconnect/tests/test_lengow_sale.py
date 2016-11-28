@@ -194,3 +194,35 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertTrue(order.order_line[0].route_id.id, self.route.id)
         self.assertTrue(order.order_line[1].route_id.id, self.route.id)
         self.assertFalse(order.order_line[2].route_id)
+
+    def test_sale_multiple_import(self):
+        # test update is ignored
+        session = ConnectorSession.from_env(self.env)
+        order_message = self.json_data['orders']['json']
+        order_data = order_message['orders'][0]
+        order_data2 = order_message['orders'][0].copy()
+        import_record(session,
+                      'lengow.sale.order',
+                      self.backend.id,
+                      '999-2121515-6705141', order_data)
+
+        order = self.env['sale.order'].search([('client_order_ref',
+                                                '=',
+                                                '999-2121515-6705141')])
+        self.assertEqual(len(order), 1)
+
+        self.assertTrue(order.payment_ids)
+        self.assertEqual(order.residual, 0)
+        self.assertAlmostEqual(order.amount_paid, order.amount_total)
+
+        import_record(session,
+                      'lengow.sale.order',
+                      self.backend.id,
+                      '999-2121515-6705141', order_data2)
+        order = self.env['sale.order'].search([('client_order_ref',
+                                                '=',
+                                                '999-2121515-6705141')])
+        self.assertEqual(len(order), 1)
+
+        self.assertTrue(order.payment_ids)
+        self.assertAlmostEqual(order.amount_paid, order.amount_total)

@@ -319,7 +319,8 @@ class LengowSaleOrderImporter(LengowImporter):
         return
 
     def _after_import(self, binding):
-        self._create_payment(binding)
+        if not binding.openerp_id.payment_ids:
+            self._create_payment(binding)
 
     def _order_line_preprocess(self, lengow_data):
         # simplify message structure for child mapping and remove refused
