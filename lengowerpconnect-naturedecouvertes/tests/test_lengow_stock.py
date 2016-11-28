@@ -84,5 +84,5 @@ class TestStock20(common.SetUpLengowBase20):
                 'http://anywsdlurl/natdec/99128/999-2121515-6705141'
                 '/shipped.xml',
                 params={'tracking_url': 'tracking code test',
-                        'carrier_name': 'Normal Delivery Charges'},
+                        'carrier_code': 'Normal Delivery Charges'},
                 data={}, headers={})

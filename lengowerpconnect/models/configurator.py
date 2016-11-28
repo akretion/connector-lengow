@@ -27,7 +27,6 @@ class MarketPlaceConfigurator(object):
     _param_tracking_code_name = None
     _param_tracking_url_name = None
     _param_tracking_carrier_name = None
-    _param_tracking_unknown_carrier_name = None
     _tracking_mandatory = False
     _restricted_carrier_code = {}
 
@@ -70,7 +69,6 @@ class MarketPlaceConfigurator(object):
         tracking_params = self.get_export_picking_tracking_params()
         if tracking_params and tracking_number:
             tracking_param = self._param_tracking_code_name
-            carrier_name_param = self._param_tracking_carrier_name
             if carrier_code:
                 # For some marketplaces, the carrier is limited to a restricted
                 # list (e.g.: Fnac)
@@ -79,13 +77,9 @@ class MarketPlaceConfigurator(object):
                 known_carrier = self.check_carrier_code(carrier_code)
                 if not known_carrier:
                     tracking_param = self._param_tracking_url_name
-                    if self._param_tracking_unknown_carrier_name:
-                        carrier_name_param = \
-                             self._param_tracking_unknown_carrier_name
-                        tracking_params.pop(self._param_tracking_carrier_name)
                     tracking_params.pop(self._param_tracking_code_name)
             tracking_params[tracking_param] = tracking_number
-            tracking_params[carrier_name_param] = carrier_code
+            tracking_params[self._param_tracking_carrier_name] = carrier_code
         else:
             tracking_params = {}
         return tracking_params
