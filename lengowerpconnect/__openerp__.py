@@ -29,6 +29,7 @@
         'views/payment_method_view.xml',
         'views/sale_view.xml',
         'wizards/lengow_product_unbinding_wizard_view.xml',
+        'wizards/lengow_discount_wizard_view.xml',
     ],
     "demo": [
     ],

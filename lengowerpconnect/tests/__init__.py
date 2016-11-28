@@ -7,3 +7,4 @@ from . import test_lengow_product_binding_wizard
 from . import test_lengow_product_export
 from . import test_lengow_sale
 from . import test_lengow_stock
+from . import test_lengow_discount_wizard

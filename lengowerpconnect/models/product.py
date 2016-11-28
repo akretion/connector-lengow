@@ -35,6 +35,13 @@ class LengowProductProduct(models.Model):
                               help="Last computed quantity to send "
                                    "on Lengow.")
     active = fields.Boolean('Active', default=True)
+    lengow_price = fields.Float('Price',
+                                compute='_compute_price',
+                                compute_sudo=False,
+                                store=False)
+    sale_price = fields.Float('Promo Price')
+    sale_from_date = fields.Date('Promo Start Date')
+    sale_end_date = fields.Date('Promo End Date')
 
     _sql_constraints = [
         ('lengow_uniq_catalog', 'unique(backend_id, catalogue_id, lengow_id)',
@@ -58,6 +65,16 @@ class LengowProductProduct(models.Model):
             product.sudo().write({'lengow_qty':
                                   product.with_context(location=location.id)
                                   [stock_field]})
+
+    @api.multi
+    def _compute_price(self):
+        for product in self:
+            product_pricelist_id = product.catalogue_id.product_pricelist_id.id
+            if product_pricelist_id:
+                product.lengow_price = product.with_context(
+                    pricelist=product_pricelist_id).price
+            else:
+                product.lengow_price = product.lst_price
 
 
 class ProductProduct(models.Model):
@@ -142,12 +159,9 @@ class ProductExportMapper(ExportMapper):
 
     @mapping
     def PRICE_PRODUCT(self, record):
-        product_pricelist_id = record.catalogue_id.product_pricelist_id.id
-        if product_pricelist_id:
-            price = record.with_context(pricelist=product_pricelist_id).price
-        else:
-            price = record.lst_price
-        return {'PRICE_PRODUCT': round(price, 2) if price else ''}
+        price_product = round(record.lengow_price, 2) if record.lengow_price \
+            else ''
+        return {'PRICE_PRODUCT': price_product}
 
     @mapping
     def CATEGORY(self, record):
@@ -181,6 +195,18 @@ class ProductExportMapper(ExportMapper):
         qty = int(record.lengow_qty)
         return {'QUANTITY': qty}
 
+    @mapping
+    def SALE_PRICE(self, record):
+        return {'SALE_PRICE': record.sale_price or ''}
+
+    @mapping
+    def SALE_FROM_DATE(self, record):
+        return {'SALE_FROM_DATE': record.sale_from_date or ''}
+
+    @mapping
+    def SALE_END_DATE(self, record):
+        return {'SALE_END_DATE': record.sale_end_date or ''}
+
 
 @lengow
 class ProductAdapter(ConnectorUnit):
@@ -196,7 +222,10 @@ class ProductAdapter(ConnectorUnit):
                 'EAN': 7,
                 'SUPPLIER_CODE': 8,
                 'BRAND': 9,
-                'QUANTITY': 10}
+                'QUANTITY': 10,
+                'SALE_PRICE': 11,
+                'SALE_FROM_DATE': 12,
+                'SALE_END_DATE': 13}
 
     def getCSVFromRecord(self, record):
         values = []

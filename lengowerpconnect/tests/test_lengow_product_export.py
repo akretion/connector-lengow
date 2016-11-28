@@ -53,7 +53,10 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'QUANTITY': '-3',
             'SUPPLIER_CODE': '',
             'URL_IMAGE': 'url_image',
-            'URL_PRODUCT': 'url_product'}
+            'URL_PRODUCT': 'url_product',
+            'SALE_PRICE': '',
+            'SALE_FROM_DATE': '',
+            'SALE_END_DATE': ''}
         self.assertDictEqual(lineDict, expectedDict)
 
     def test_export_products_lang(self):
@@ -105,7 +108,11 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'QUANTITY': '-3',
             'SUPPLIER_CODE': '',
             'URL_IMAGE': 'url_image',
-            'URL_PRODUCT': 'url_product'}
+            'URL_PRODUCT': 'url_product',
+            'SALE_PRICE': '',
+            'SALE_FROM_DATE': '',
+            'SALE_END_DATE': ''
+        }
         self.assertDictEqual(lineDict, expectedDict)
 
     def test_export_products_pricelist(self):
@@ -129,6 +136,15 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'price_discount': -0.1,
         })
         self.catalogue.write({'product_pricelist_id': pricelist.id})
+
+        wizard = self.env['lengow.discount.wizard'].with_context(
+            active_ids=self.catalogue.binded_product_ids.ids).create({
+                'discount': 30,
+                'discount_type': 'price',
+                'discount_start': '2016-11-20',
+                'discount_end': '2016-12-20'})
+        wizard.action_confirm()
+
         env = get_environment(ConnectorSession.from_env(self.env),
                               'lengow.product.product', self.backend.id)
         products_exporter = env.get_connector_unit(ProductExporter)
@@ -161,5 +177,9 @@ class TestLengowProductBinding(common.SetUpLengowBase20):
             'QUANTITY': '-3',
             'SUPPLIER_CODE': '',
             'URL_IMAGE': 'url_image',
-            'URL_PRODUCT': 'url_product'}
+            'URL_PRODUCT': 'url_product',
+            'SALE_PRICE': '30.0',
+            'SALE_FROM_DATE': '2016-11-20',
+            'SALE_END_DATE': '2016-12-20'
+        }
         self.assertDictEqual(lineDict, expectedDict)

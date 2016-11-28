@@ -33,6 +33,10 @@
                     <field name="image_url"/>
                     <field name="state"/>
                     <field name="lengow_qty"/>
+                    <field name="price"/>
+                    <field name="sale_price"/>
+                    <field name="sale_from_date"/>
+                    <field name="sale_end_date"/>
                 </tree>
             </field>
         </record>
