@@ -23,6 +23,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'wizards/lengow_product_binding_wizard_view.xml',
+        'views/delivery_view.xml',
         'views/product_view.xml',
         'views/lengow_model_view.xml',
         'views/lengowerpconnect_menu.xml',
