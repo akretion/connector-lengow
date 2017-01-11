@@ -19,6 +19,7 @@ class NatdecPlaceConfigurator(MarketPlaceConfigurator):
         'COS',
         'Group',
         'UPS',
+        'SEUR',
         }
 
     def get_export_picking_api(self, id_flux, order_id):
