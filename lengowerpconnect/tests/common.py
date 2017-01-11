@@ -27,6 +27,8 @@ class SetUpLengowBase(common.TransactionCase):
         self.session = ConnectorSession(self.env.cr, self.env.uid,
                                         context=self.env.context)
         self.warehouse = self.env.ref('stock.warehouse0')
+        self.fiscal_position = self.env['account.fiscal.position'].create(
+            {'name': 'TEST'})
         self.post_method = 'openerp.addons.lengowerpconnect.models'\
                            '.adapter.requests.post'
         self.get_method = 'openerp.addons.lengowerpconnect.models'\
@@ -45,7 +47,8 @@ class SetUpLengowBase20(SetUpLengowBase):
              'location': 'http://anyurl',
              'wsdl_location': 'http://anywsdlurl',
              'id_client': 'a4a506440102b8d06a0f63fdd1eadd5f',
-             'warehouse_id': self.warehouse.id}
+             'warehouse_id': self.warehouse.id,
+             'fiscal_position_id': self.fiscal_position.id}
         )
 
         self.amazon_analytic = self.env['account.analytic.account'].create(

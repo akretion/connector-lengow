@@ -314,6 +314,8 @@ class LengowMarketPlace(models.Model):
     route_id = fields.Many2one(string='Route',
                                comodel_name='stock.location.route',
                                domain=[('sale_selectable', '=', True)])
+    flow_ids = fields.One2many(comodel_name='lengow.flow',
+                               inverse_name='marketplace_id')
 
     @api.multi
     def _get_account_analytic_id(self):
@@ -346,6 +348,20 @@ class LengowMarketPlace(models.Model):
             'company_id': marketplace.backend_id.company_id.id})
         marketplace.write({'payment_method_id': payment_method.id})
         return marketplace
+
+
+class LengowFlow(models.Model):
+    _name = 'lengow.flow'
+
+    code = fields.Char('Lengow Flow ID',
+                       required=True)
+    name = fields.Char('Description')
+    fiscal_position_id = fields.Many2one(
+        comodel_name='account.fiscal.position',
+        string='Fiscal position')
+    marketplace_id = fields.Many2one(comodel_name='lengow.market.place',
+                                     string='MarketPlace',
+                                     required=True)
 
 
 @lengow30
