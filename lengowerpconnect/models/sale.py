@@ -27,6 +27,7 @@ class LengowSaleOrder(models.Model):
     _inherits = {'sale.order': 'openerp_id'}
     _description = 'Lengow Sale Order'
 
+    backend_id = fields.Many2one(select=True)
     openerp_id = fields.Many2one(comodel_name='sale.order',
                                  string='Sale Order',
                                  required=True,
@@ -44,11 +45,15 @@ class LengowSaleOrder(models.Model):
         string='Total amount w. tax',
         digits_compute=dp.get_precision('Account')
     )
-    lengow_order_id = fields.Char(string='Lengow Order ID')
+    lengow_order_id = fields.Char(string='Lengow Order ID',
+                                  select=True)
     marketplace_id = fields.Many2one(string='MarketPlace',
-                                     comodel_name='lengow.market.place')
-    id_flux = fields.Char('Id Flux on Lengow')
-    flow_id = fields.Many2one(comodel_name='lengow.flow')
+                                     comodel_name='lengow.market.place',
+                                     select=True)
+    id_flux = fields.Char('Id Flux on Lengow',
+                          select=True)
+    flow_id = fields.Many2one(comodel_name='lengow.flow',
+                              select=True)
 
 
 class SaleOrder(models.Model):
