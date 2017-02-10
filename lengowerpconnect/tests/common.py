@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2016 Cédric Pigeon
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from openerp import fields
 import openerp.tests.common as common
 from openerp.addons.connector.session import ConnectorSession
 
@@ -101,7 +102,7 @@ class SetUpLengowBase20(SetUpLengowBase):
                         "order_mrid": "999-2121515-6705141",
                         "order_refid": "999-2121515-6705141",
                         "order_external_id": "99341",
-                        "order_purchase_date": "2016-10-01",
+                        "order_purchase_date": fields.Date.today(),
                         "order_purchase_heure": "04:51:24",
                         "order_amount": "305.65",
                         "order_tax": "0.00",
@@ -113,7 +114,7 @@ class SetUpLengowBase20(SetUpLengowBase):
                             "payment_checkout": "",
                             "payment_status": "",
                             "payment_type": "",
-                            "payment_date": "2016-10-01",
+                            "payment_date": fields.Date.today(),
                             "payment_heure": "04:51:24"
                         },
                         "order_invoice": {

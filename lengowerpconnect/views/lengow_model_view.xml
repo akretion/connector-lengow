@@ -58,6 +58,16 @@
                                          <button name="import_sale_orders" type="object" string="Import Sale Orders"  class="oe_highlight" colspan="2"/>
                                     </group>
                                 </page>
+                                <page name="currency" String="Multi-Currency">
+                                    <group>
+                                        <field nolabel="1" name="currency_mapping_ids">
+                                            <tree editable="top">
+                                                <field name="currency_id"/>
+                                                <field name="pricelist_id"/>
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
                             </notebook>
                         </group>
                     </sheet>

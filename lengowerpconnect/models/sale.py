@@ -108,6 +108,19 @@ class SaleOrder(models.Model):
             else:
                 order.lengow_total_amount_tax = False
 
+    @api.multi
+    def action_invoice_create(self, grouped=False, states=None,
+                              date_invoice=False):
+        if self.is_from_lengow:
+            if self.currency_id != self.company_id.currency_id and not \
+                    date_invoice:
+                return super(SaleOrder, self).action_invoice_create(
+                    grouped=grouped, states=states,
+                    date_invoice=fields.Date.today())
+        return super(SaleOrder, self).action_invoice_create(
+            grouped=grouped, states=states,
+            date_invoice=date_invoice)
+
 
 @lengow20
 class LengowSaleOrderAdapter(GenericAdapter20):
@@ -260,6 +273,18 @@ class SaleOrderMapper(LengowImportMapper):
     def flow_id(self, record):
         flow_id = self.options.flow.id if self.options.flow else False
         return {'flow_id': flow_id}
+
+    @mapping
+    def pricelist_id(self, record):
+        currency_code = record['order_currency']
+        currency = self.env['res.currency'].search(
+            [('name', '=', currency_code)])
+        if currency:
+            currency_mapping = \
+                self.options.marketplace.backend_id.currency_mapping_ids\
+                    .filtered(lambda x: x.currency_id.id == currency.id)
+            if currency_mapping:
+                return {'pricelist_id': currency_mapping.pricelist_id.id}
 
     def finalize(self, map_record, values):
         values.setdefault('order_line', [])

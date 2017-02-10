@@ -9,6 +9,7 @@ from openerp import fields
 from openerp.addons.connector.session import ConnectorSession
 from openerp.tools.safe_eval import safe_eval
 from openerp.osv.expression import TRUE_LEAF
+from openerp.exceptions import ValidationError
 
 from ..models.connector import get_environment
 from ..models.sale import SaleOrderBatchImporter
@@ -128,6 +129,9 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
         self.assertTrue(order.is_from_lengow)
         self.assertEqual(order.name, 'AMAZON-999-2121515-6705141')
+
+        # order should be in EUR
+        self.assertEqual(order.currency_id.id, self.env.ref('base.EUR').id)
 
         # check partner linked
         self.assertEqual(order.partner_id.name, 'Lengow A')
@@ -280,3 +284,58 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
 
         # order should use the right fiscal position
         self.assertEqual(order.fiscal_position.id, fiscal_position.id)
+
+    def test_sale_currency_mapping_fail(self):
+        gbp = self.env.ref('base.GBP')
+        gbp_pricelist = self.env['product.pricelist'].create({
+            'name': 'GBP pricelist',
+            'type': 'sale',
+            'version_id': [(0, 0, {
+                'name': 'v1.0',
+                'items_id': [(0, 0, {
+                    'name': '1',
+                    'base': 1})]})]}
+        )
+
+        # Pricelist should be in the same currency
+        with self.assertRaises(ValidationError):
+            self.env['lengow.currency.mapping'].create({
+                'backend_id': self.backend.id,
+                'currency_id': gbp.id,
+                'pricelist_id': gbp_pricelist.id
+            })
+
+    def test_sale_currency(self):
+        gbp = self.env.ref('base.GBP')
+        gbp_pricelist = self.env['product.pricelist'].create({
+            'name': 'GBP pricelist',
+            'type': 'sale',
+            'currency_id': gbp.id,
+            'version_id': [(0, 0, {
+                'name': 'v1.0',
+                'items_id': [(0, 0, {
+                    'name': '1',
+                    'base': 1})]})]}
+        )
+
+        self.env['lengow.currency.mapping'].create({
+            'backend_id': self.backend.id,
+            'currency_id': gbp.id,
+            'pricelist_id': gbp_pricelist.id
+        })
+
+        order_message = self.json_data['orders']['json']
+        order_data = order_message['orders'][0]
+        order_data['order_currency'] = "GBP"
+        session = ConnectorSession.from_env(self.env)
+        import_record(session,
+                      'lengow.sale.order',
+                      self.backend.id,
+                      '999-2121515-6705141', order_data)
+
+        order = self.env['sale.order'].search([('client_order_ref',
+                                                '=',
+                                                '999-2121515-6705141')])
+        self.assertEqual(len(order), 1)
+        self.assertEqual(order.currency_id.id, gbp.id)
+        self.assertEqual(order.pricelist_id.id, gbp_pricelist.id)

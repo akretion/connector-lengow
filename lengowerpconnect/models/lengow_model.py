@@ -12,6 +12,7 @@ from openerp.addons.connector.unit.mapper import ImportMapper
 from openerp.addons.connector.unit.mapper import mapping
 from openerp.addons.connector.session import ConnectorSession
 from openerp.addons.connector.queue.job import job
+from openerp import exceptions
 
 from .backend import lengow, lengow30
 from .adapter import GenericAdapter
@@ -94,6 +95,10 @@ class LengowBackend(models.Model):
     binded_products_count = fields.Float(compute='_count_binded_products')
     id_client = fields.Char('Lengow Id Client')
     import_orders_from_date = fields.Date('Import Orders from Date')
+    currency_mapping_ids = fields.One2many(
+        string='Currencies',
+        comodel_name='lengow.currency.mapping',
+        inverse_name='backend_id')
 
     def _count_binded_products(self):
         for catalogue in self.catalogue_ids:
@@ -150,6 +155,36 @@ class LengowBackend(models.Model):
     def _scheduler_import_sale_orders(self, domain=None, filters={}):
         self._lengow_backend('import_sale_orders', domain=domain,
                              filters=filters)
+
+
+class LengowCurrencyMapping(models.Model):
+    _name = 'lengow.currency.mapping'
+
+    backend_id = fields.Many2one(string='Lengow Backend',
+                                 comodel_name='lengow.backend',
+                                 required=True)
+    currency_id = fields.Many2one(string='Currency',
+                                  comodel_name='res.currency',
+                                  required=True)
+    pricelist_id = fields.Many2one(string='Pricelist',
+                                   comodel_name='product.pricelist',
+                                   required=True)
+
+    _sql_constraints = [
+        ('curency_map_uniq',
+         'unique(backend_id, currency_id)',
+         'A binding already exists for this currency.'),
+    ]
+
+    @api.multi
+    @api.constrains('pricelist_id')
+    def _check_currency(self):
+        for mapping in self:
+            if mapping.currency_id and mapping.pricelist_id:
+                if mapping.currency_id.id != \
+                        mapping.pricelist_id.currency_id.id:
+                    raise exceptions.ValidationError(
+                        _('Pricelist should be in the same currency.'))
 
 
 class LengowCatalogue(models.Model):
