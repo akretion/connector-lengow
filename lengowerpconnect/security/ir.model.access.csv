@@ -20,8 +20,6 @@
 "access_stock_picking_out_manager","lengow_stock.picking manager","model_lengow_stock_picking","stock.group_stock_manager",1,1,1,1
 "access_lengow_sale_order_stock_user","lengow_sale_order warehouse user","model_lengow_sale_order","stock.group_stock_user",1,1,0,0
 "access_lengow_sale_order_line_stock_user","lengow_sale_order_line warehouse user","model_lengow_sale_order_line","stock.group_stock_user",1,1,0,0
-"access_lengow_flow_manager","lengow_flow lengow manager","model_lengow_flow","group_lengow_manager",1,1,1,1
-"access_lengow_flow_user","lengow_flow lengow user","model_lengow_flow","group_lengow_user",1,0,0,0
 "access_lengow_currency_manager","lengow_currency lengow manager","model_lengow_currency_mapping","group_lengow_manager",1,1,1,1
 "access_lengow_currency_user","lengow_currency lengow user","model_lengow_currency_mapping","group_lengow_user",1,0,0,0
 "access_lengow_tax_manager","lengow_tax lengow manager","model_lengow_tax_mapping","group_lengow_manager",1,1,1,1
