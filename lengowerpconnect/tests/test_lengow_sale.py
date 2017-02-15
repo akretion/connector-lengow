@@ -234,40 +234,18 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
         self.assertTrue(order.payment_ids)
         self.assertAlmostEqual(order.amount_paid, order.amount_total)
 
-    def test_import_sale_order_flow(self):
-        flow = self.env['lengow.flow'].create({'code': '99128',
-                                               'name': 'test',
-                                               'marketplace_id':
-                                                   self.marketplace.id})
-        session = ConnectorSession.from_env(self.env)
-        order_message = self.json_data['orders']['json']
-        order_data = order_message['orders'][0]
-        import_record(session,
-                      'lengow.sale.order',
-                      self.backend.id,
-                      '999-2121515-6705141', order_data)
-
-        order = self.env['sale.order'].search([('client_order_ref',
-                                                '=',
-                                                '999-2121515-6705141')])
-        self.assertEqual(len(order), 1)
-        self.assertEqual(order.lengow_bind_ids[0].flow_id.id, flow.id)
-
-        # order should use the right fiscal position
-        self.assertEqual(order.fiscal_position.id, self.fiscal_position.id)
-
-    def test_import_sale_order_flow_fiscal(self):
+    def test_import_sale_order_country_fiscal(self):
         fiscal_position = self.env['account.fiscal.position'].create(
             {
                 'name': 'Test Lengow'
             }
         )
-        flow = self.env['lengow.flow'].create({'code': '99128',
-                                               'name': 'test',
-                                               'marketplace_id':
-                                                   self.marketplace.id,
-                                               'fiscal_position_id':
-                                                   fiscal_position.id})
+        self.env['lengow.tax.mapping'].create({
+            'backend_id': self.backend.id,
+            'country_id': self.env.ref('base.fr').id,
+            'fiscal_position_id': fiscal_position.id
+        })
+
         session = ConnectorSession.from_env(self.env)
         order_message = self.json_data['orders']['json']
         order_data = order_message['orders'][0]
@@ -280,7 +258,6 @@ class TestImportSaleOrders20(common.SetUpLengowBase20):
                                                 '=',
                                                 '999-2121515-6705141')])
         self.assertEqual(len(order), 1)
-        self.assertEqual(order.lengow_bind_ids[0].flow_id.id, flow.id)
 
         # order should use the right fiscal position
         self.assertEqual(order.fiscal_position.id, fiscal_position.id)

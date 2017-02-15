@@ -99,6 +99,10 @@ class LengowBackend(models.Model):
         string='Currencies',
         comodel_name='lengow.currency.mapping',
         inverse_name='backend_id')
+    tax_mapping_ids = fields.One2many(
+        string='Taxes',
+        comodel_name='lengow.tax.mapping',
+        inverse_name='backend_id')
 
     def _count_binded_products(self):
         for catalogue in self.catalogue_ids:
@@ -185,6 +189,28 @@ class LengowCurrencyMapping(models.Model):
                         mapping.pricelist_id.currency_id.id:
                     raise exceptions.ValidationError(
                         _('Pricelist should be in the same currency.'))
+
+
+class LengowTaxMapping(models.Model):
+    _name = 'lengow.tax.mapping'
+
+    backend_id = fields.Many2one(string='Lengow Backend',
+                                 comodel_name='lengow.backend',
+                                 required=True)
+    country_id = fields.Many2one(string='Country',
+                                 comodel_name='res.country',
+                                 required=True)
+
+    fiscal_position_id = fields.Many2one(
+        comodel_name='account.fiscal.position',
+        string='Fiscal position'
+    )
+
+    _sql_constraints = [
+        ('country_map_uniq',
+         'unique(backend_id, country_id)',
+         'A binding already exists for this country.'),
+    ]
 
 
 class LengowCatalogue(models.Model):
@@ -349,8 +375,6 @@ class LengowMarketPlace(models.Model):
     route_id = fields.Many2one(string='Route',
                                comodel_name='stock.location.route',
                                domain=[('sale_selectable', '=', True)])
-    flow_ids = fields.One2many(comodel_name='lengow.flow',
-                               inverse_name='marketplace_id')
 
     @api.multi
     def _get_account_analytic_id(self):
@@ -383,20 +407,6 @@ class LengowMarketPlace(models.Model):
             'company_id': marketplace.backend_id.company_id.id})
         marketplace.write({'payment_method_id': payment_method.id})
         return marketplace
-
-
-class LengowFlow(models.Model):
-    _name = 'lengow.flow'
-
-    code = fields.Char('Lengow Flow ID',
-                       required=True)
-    name = fields.Char('Description')
-    fiscal_position_id = fields.Many2one(
-        comodel_name='account.fiscal.position',
-        string='Fiscal position')
-    marketplace_id = fields.Many2one(comodel_name='lengow.market.place',
-                                     string='MarketPlace',
-                                     required=True)
 
 
 @lengow30

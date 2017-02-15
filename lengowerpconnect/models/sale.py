@@ -52,8 +52,6 @@ class LengowSaleOrder(models.Model):
                                      select=True)
     id_flux = fields.Char('Id Flux on Lengow',
                           select=True)
-    flow_id = fields.Many2one(comodel_name='lengow.flow',
-                              select=True)
 
 
 class SaleOrder(models.Model):
@@ -241,9 +239,15 @@ class SaleOrderMapper(LengowImportMapper):
 
     @mapping
     def fiscal_position(self, record):
-        fiscal_position = self.options.marketplace.fiscal_position_id
-        if self.options.flow and self.options.flow.fiscal_position_id:
-            fiscal_position = self.options.flow.fiscal_position_id
+        # looking for fiscal position based on delivery country
+        country_code_iso = record['delivery_address']['country_iso']
+        tax_mapping = \
+            self.options.marketplace.backend_id.tax_mapping_ids \
+                .filtered(lambda x: x.country_id.code == country_code_iso)
+        if tax_mapping:
+            fiscal_position = tax_mapping.fiscal_position_id
+        else:
+            fiscal_position = self.options.marketplace.fiscal_position_id
         return {'fiscal_position': fiscal_position.id or False}
 
     @mapping
@@ -268,11 +272,6 @@ class SaleOrderMapper(LengowImportMapper):
     @mapping
     def id_flux(self, record):
         return {'id_flux': record['idFlux']}
-
-    @mapping
-    def flow_id(self, record):
-        flow_id = self.options.flow.id if self.options.flow else False
-        return {'flow_id': flow_id}
 
     @mapping
     def pricelist_id(self, record):
@@ -337,17 +336,8 @@ class LengowSaleOrderImporter(LengowImporter):
             return True if marketplacedelivering == "1" else False
         return False
 
-    def _get_flow(self, record, marketplace):
-        idflux = record.get('idFlux', False)
-        flow = marketplace.flow_ids.filtered(lambda place_flow:
-                                             place_flow.code == idflux)
-        if flow:
-            return flow
-        return False
-
     def _create_data(self, map_record, **kwargs):
         marketplace = self._get_market_place(map_record.source)
-        flow = self._get_flow(map_record.source, marketplace)
         is_marketplacedelivering = self._check_is_marketplacedelivering(
             map_record.source)
         return super(LengowSaleOrderImporter, self)._create_data(
@@ -355,7 +345,6 @@ class LengowSaleOrderImporter(LengowImporter):
             marketplace=marketplace,
             lengow_order_id=self.lengow_id,
             is_marketplacedelivering=is_marketplacedelivering,
-            flow=flow,
             **kwargs)
 
     def _update_data(self, map_record, **kwargs):
