@@ -119,6 +119,17 @@ class SaleOrder(models.Model):
             grouped=grouped, states=states,
             date_invoice=date_invoice)
 
+    @api.model
+    def _prepare_invoice(self, order, lines):
+        res = super(SaleOrder, self)._prepare_invoice(order, lines)
+        if order.is_from_lengow:
+            marketplace = order.lengow_bind_ids.marketplace_id
+            if marketplace.sale_journal_id:
+                res['journal_id'] = marketplace.sale_journal_id.id
+            if marketplace.receivable_account_id:
+                res['account_id'] = marketplace.receivable_account_id.id
+        return res
+
 
 @lengow20
 class LengowSaleOrderAdapter(GenericAdapter20):
@@ -356,7 +367,8 @@ class LengowSaleOrderImporter(LengowImporter):
         return
 
     def _after_import(self, binding):
-        if not binding.openerp_id.payment_ids:
+        if not binding.openerp_id.payment_ids\
+                and binding.marketplace_id.generate_payment:
             self._create_payment(binding)
 
     def _order_line_preprocess(self, lengow_data):

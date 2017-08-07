@@ -372,6 +372,16 @@ class LengowMarketPlace(models.Model):
         comodel_name='stock.warehouse',
         string='warehouse',
         compute='_get_warehouse_id')
+    sale_journal_id = fields.Many2one(
+        comodel_name='account.journal',
+        string='Journal',
+    )
+    receivable_account_id = fields.Many2one(
+        comodel_name='account.account',
+        string='Customer Account',
+    )
+    generate_payment = fields.Boolean()
+
     backend_version = fields.Selection(related='backend_id.version')
     payment_method_id = fields.Many2one(string='Payment Method',
                                         comodel_name='payment.method')

@@ -120,7 +120,7 @@
                         </div>
                         <label for="name" class="oe_edit_only"/>
                         <h1>
-                            <field name="name" class="oe_inline" /> 
+                            <field name="name" class="oe_inline" />
                         </h1>
                         <group name='backend'>
                             <field name="id" invisible="1"/>
@@ -203,6 +203,10 @@
                             <field name="payment_method_id" readonly="1"/>
                         </group>
                         <group string="Options" name="options">
+                            <field name="sale_prefix_code"/>
+                            <field name="sale_journal_id"/>
+                            <field name="receivable_account_id"/>
+                            <field name="generate_payment"/>
                             <field name="account_analytic_id" groups="sale.group_analytic_accounting" class="oe_read_only"/>
                             <field name="specific_account_analytic_id" groups="sale.group_analytic_accounting" class="oe_edit_only" />
                             <field name="fiscal_position_id" class="oe_read_only"/>
