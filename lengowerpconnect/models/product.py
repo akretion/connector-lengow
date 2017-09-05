@@ -295,7 +295,7 @@ class ProductExporter(Exporter):
             vals = self.export(map_record)
             csvRows.append(adapter.getCSVFromRecord(vals))
 
-        wr = csv.writer(csvFile, quoting=csv.QUOTE_ALL, delimiter=';')
+        wr = csv.writer(csvFile, quoting=csv.QUOTE_ALL, delimiter='|')
         wr.writerows(csvRows)
 
         job_uuid = self.env.context.get('job_uuid', False)
