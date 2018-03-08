@@ -156,14 +156,6 @@ class LengowSaleOrderAdapter(GenericAdapter20):
         return super(LengowSaleOrderAdapter, self).search()
 
 
-    def get(self, id_flux, id_order):
-        # TODO FIXME the api return a fucking xml
-        self._api = u"V2/%s/%s/orderid/%s/"% (
-            self.backend_record.id_client, id_flux, id_order)
-        return super(LengowSaleOrderAdapter, self).search()
-
-
-
 @lengow20
 class SaleOrderBatchImporter(DelayedBatchImporter):
     _model_name = 'lengow.sale.order'

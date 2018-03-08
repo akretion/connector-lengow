@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <form string="Lengow Backend">
                     <header>
+                        <button name="%(action_lengow_manual_import_wizard)d" type="action" string="Import Manuel" class="oe_highlight" groups="lengowerpconnect.group_lengow_manager"/>
                         <button name="synchronize_metadata" type="object"
                         string="Synchronize Metadata" class="oe_highlight" groups="lengowerpconnect.group_lengow_manager"
                         attrs="{'invisible': [('version', '!=', '3.0')]}"/>

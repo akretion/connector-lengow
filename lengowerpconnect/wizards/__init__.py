@@ -4,3 +4,4 @@
 from . import lengow_product_binding_wizard
 from . import lengow_product_unbinding_wizard
 from . import lengow_discount_wizard
+from . import lengow_manual_import_wizard
